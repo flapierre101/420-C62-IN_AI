@@ -23,15 +23,14 @@ if __name__ == '__main__':
     print(count)
 
     a = np.zeros((len(count), len(count)))
+    b = np.zeros((len(count), len(count)))
 
-    print(a)
     print(list_mots[1])
 
-    tailleF = 15
-    moitieF = math.floor(tailleF / 2)
-    for i in range(len(list_mots)):
-        for j in range(tailleF):
-            pass
+
+
+
+
 
     # exemple fenetre de 5 hardcodé
     for i in range(len(list_mots)):
@@ -61,7 +60,24 @@ if __name__ == '__main__':
             a[indexMotCentral][count[list_mots[i - 2]]] += 1
 
 
+    # Version courte ! B
+    tailleF = 5
+    moitieF = math.floor(tailleF / 2)
+    for i in range(len(list_mots)):
+        motCentral = count[list_mots[i]]
+        for j in range(1, moitieF+1):
+            if not i - j < 0:
+                b[motCentral][count[list_mots[i - j]]] += 1
+            if not i + j >= len(list_mots):
+                b[motCentral][count[list_mots[i + j]]] += 1
 
+
+
+    print("ici A")
+
+    print(a)
+    print("ici B")
+    print(b)
 
 
 
