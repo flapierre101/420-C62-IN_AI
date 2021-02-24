@@ -1,6 +1,7 @@
 import re
 import numpy as np
 import math
+import entraineur
 
 def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.
@@ -76,17 +77,3 @@ if __name__ == '__main__':
 
     print("ici B")
     print(b)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
