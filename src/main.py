@@ -10,9 +10,7 @@ def print_hi(name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    entraineur = Entraineur(12, 'UTF-8', '../textes/PetitMousquetaire.txt')
-    entraineur.entrainement()
-    print(entraineur.matriceCo)
+
     """ 
      # Gestion des arguments (tailleFenetre,encodage, chemin)
      Affichage des erreurs si arguments invalide
