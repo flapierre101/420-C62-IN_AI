@@ -2,29 +2,44 @@ import re
 import numpy as np
 
 # Produit Scalaire
-
 class trainer():
+
     def __init__(self):
         pass
         #self.result = 0
 
-
-    def produitScalaire(motA, motB): #motA & motB = type np.array(1,y)
-        #self.result = np.sum(motA * motB)
-        return np.sum(motA * motB)
-
-    def leastSquares(motA, motB): #motA & motB = type np.array(1,y)
-        #donne le least square entre 2 mots
-        # return np.sum(motA**2 - motB**2)
-        return np.sum(np.square(motA) - np.square(motB))
-
-    def comparator(lq1, lq2): #Entier resultat optenu de la methode leastSquare ou cityBlock
-        #Compare les valeurs des least-squares et retoure le meilleur des 2(lowest)
-        if lq1 < lq2:
-            return lq1
+    motUnique = {}
+    i = 0
+    list_mots = re.findall('\w+', open('../textes/PetitMousquetaire.txt', 'r', encoding="UTF-8").read())
+    list_mots = [x.lower() for x in list_mots]
+    for mot in list_mots:
+        if mot in motUnique:
+            pass
         else:
-            return lq2
+            motUnique[mot] = i
+            i += 1
 
-    def cityBlock(motA, motB):
-        # donne le city-block entre 2 mots
-        return np.sum(np.absolute(motA - motB))
+    print(motUnique)
+
+    b = np.zeros((len(motUnique), len(motUnique)))
+
+    print(list_mots[1])
+
+    # Version courte ! B
+    tailleF = 9
+    moitieF = tailleF // 2
+    for i in range(len(list_mots)):
+        motCentral = motUnique[list_mots[i]]
+        for j in range(1, moitieF + 1):
+            if not i - j < 0 and motCentral != motUnique[list_mots[i - j]]:
+                b[motCentral][motUnique[list_mots[i - j]]] += 1
+            if not i + j >= len(list_mots) and motCentral != motUnique[list_mots[i + j]]:
+                b[motCentral][motUnique[list_mots[i + j]]] += 1
+
+    print("ici B")
+    print(b)
+
+
+
+
+
