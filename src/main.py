@@ -22,7 +22,6 @@ if __name__ == '__main__':
 
     print(motUnique)
 
-    a = np.zeros((len(motUnique), len(motUnique)))
     b = np.zeros((len(motUnique), len(motUnique)))
 
     print(list_mots[1])
@@ -32,37 +31,12 @@ if __name__ == '__main__':
 
 
 
-    # exemple fenetre de 5 hardcodé
-    for i in range(len(list_mots)):
-        if i == 0:
-            indexMotCentral = motUnique[list_mots[i]]
-            a[indexMotCentral][motUnique[list_mots[i + 1]]] += 1
-            a[indexMotCentral][motUnique[list_mots[i + 2]]] += 1
-        elif i == 1:
-            indexMotCentral = motUnique[list_mots[i]]
-            a[indexMotCentral][motUnique[list_mots[i + 1]]] += 1
-            a[indexMotCentral][motUnique[list_mots[i + 2]]] += 1
-            a[indexMotCentral][motUnique[list_mots[i - 1]]] += 1
-        elif i == len(list_mots)-2:
-            indexMotCentral = motUnique[list_mots[i]]
-            a[indexMotCentral][motUnique[list_mots[i + 1]]] += 1
-            a[indexMotCentral][motUnique[list_mots[i - 2]]] += 1
-            a[indexMotCentral][motUnique[list_mots[i - 1]]] += 1
-        elif i == len(list_mots) - 1:
-            indexMotCentral = motUnique[list_mots[i]]
-            a[indexMotCentral][motUnique[list_mots[i - 1]]] += 1
-            a[indexMotCentral][motUnique[list_mots[i - 2]]] += 1
-        else:
-            indexMotCentral = motUnique[list_mots[i]]
-            a[indexMotCentral][motUnique[list_mots[i + 1]]] += 1
-            a[indexMotCentral][motUnique[list_mots[i + 2]]] += 1
-            a[indexMotCentral][motUnique[list_mots[i - 1]]] += 1
-            a[indexMotCentral][motUnique[list_mots[i - 2]]] += 1
+
 
 
     # Version courte ! B
     tailleF = 9
-    moitieF = math.floor(tailleF / 2)
+    moitieF = tailleF // 2
     for i in range(len(list_mots)):
         motCentral = motUnique[list_mots[i]]
         for j in range(1, moitieF+1):
