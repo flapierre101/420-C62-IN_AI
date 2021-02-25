@@ -1,43 +1,73 @@
 import re
 import numpy as np
+from traceback import print_exc
 
-# Produit Scalaire
-class trainer():
+"""
+     # Gestion des arguments (tailleFenetre,encodage, chemin)
+     Affichage des erreurs si arguments invalide
+     
+     
+     # Dans le init, se créer une instance d'Entraineur
+     
+     # Logique d'entraineur :
+     - Créer liste des mots uniques 
+     - Créer liste des stop-word avec un count de la liste des mots les plus courants** 
+     - Créer matrice selon taille de la taille du dictionnaire
+     - Créer dictionnaire{Str:Mot, Int:Index}
+    """
 
-    def __init__(self):
-        pass
-        #self.result = 0
 
-    motUnique = {}
-    i = 0
-    list_mots = re.findall('\w+', open('../textes/PetitMousquetaire.txt', 'r', encoding="UTF-8").read())
-    list_mots = [x.lower() for x in list_mots]
-    for mot in list_mots:
-        if mot in motUnique:
-            pass
-        else:
-            motUnique[mot] = i
-            i += 1
+class Entraineur:
 
-    print(motUnique)
+    def __init__(self, tailleFenetre, encodage, path):
+        self.fenetre = tailleFenetre
+        self.encodage = encodage
+        self.path = path
 
-    b = np.zeros((len(motUnique), len(motUnique)))
 
-    print(list_mots[1])
+    def entrainement(self):
+        try:
+            liste_mots = re.findall('\w+', open(self.path, 'r', encoding=self.encodage).read())
+            liste_mots = [x.lower() for x in liste_mots]
 
-    # Version courte ! B
-    tailleF = 9
-    moitieF = tailleF // 2
-    for i in range(len(list_mots)):
-        motCentral = motUnique[list_mots[i]]
-        for j in range(1, moitieF + 1):
-            if not i - j < 0 and motCentral != motUnique[list_mots[i - j]]:
-                b[motCentral][motUnique[list_mots[i - j]]] += 1
-            if not i + j >= len(list_mots) and motCentral != motUnique[list_mots[i + j]]:
-                b[motCentral][motUnique[list_mots[i + j]]] += 1
+            motsUnique = self.__creerListeUnique(liste_mots)
 
-    print("ici B")
-    print(b)
+            self.matriceCo = np.zeros((len(motsUnique), len(motsUnique)))
+
+            self.__parcourirMatrice(motsUnique, liste_mots)
+
+
+        except:
+            print_exc()
+            return 1
+
+
+
+
+
+    def __creerListeUnique(self, liste_mots):
+        motUnique = {}
+        i = 0
+
+        for mot in liste_mots:
+            if mot in motUnique:
+                pass
+            else:
+                motUnique[mot] = i
+                i += 1
+
+        return motUnique
+
+    def __parcourirMatrice(self, motsUnique, liste_mots):
+
+        moitieF = self.fenetre // 2
+        for i in range(len(liste_mots)):
+            motCentral = motsUnique[liste_mots[i]]
+            for j in range(1, moitieF + 1):
+                if not i - j < 0 and motCentral != motsUnique[liste_mots[i - j]]:
+                    self.matriceCo[motCentral][motsUnique[liste_mots[i - j]]] += 1
+                if not i + j >= len(liste_mots) and motCentral != motsUnique[liste_mots[i + j]]:
+                    self.matriceCo[motCentral][motsUnique[liste_mots[i + j]]] += 1
 
 
 

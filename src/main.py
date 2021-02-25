@@ -1,7 +1,7 @@
 import re
 import numpy as np
 import math
-import entraineur
+from Entraineur import Entraineur
 
 def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.
@@ -10,7 +10,9 @@ def print_hi(name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-
+    entraineur = Entraineur(12, 'UTF-8', '../textes/PetitMousquetaire.txt')
+    entraineur.entrainement()
+    print(entraineur.matriceCo)
     """ 
      # Gestion des arguments (tailleFenetre,encodage, chemin)
      Affichage des erreurs si arguments invalide
