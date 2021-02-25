@@ -16,7 +16,8 @@ class trainer():
     def leastSquares(motA, motB): #motA & motB = type np.array(1,y)
         #donne le least square entre 2 mots
         # return np.sum(motA**2 - motB**2)
-        return np.sum(np.square(motA) - np.square(motB))
+        # return np.sum(np.square(motA) - np.square(motB))
+        return np.sum(np.square(motA - motB))
 
     def comparator(lq1, lq2): #Entier resultat optenu de la methode leastSquare ou cityBlock
         #Compare les valeurs des least-squares et retoure le meilleur des 2(lowest)
