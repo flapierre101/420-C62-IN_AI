@@ -1,15 +1,34 @@
-import re
+from sys import argv
 import numpy as np
-import math
-import entraineur
+import re
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+def lire(chemin, encodage):
+    f = open(chemin, 'r', encoding=encodage)
+    txt = f.read()
+    f.close()
+
+    return txt
 
 
-# Press the green button in the gutter to run the script.
+def main():
+    try:
+        fenetre, enc, chemin = argv[1:]
+        txt = lire(chemin, enc)
+
+        leMot, nbSyn, methode = input("\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit sclaire:0 least-squares:1, city-block: 2)\n\n").split()
+        # autre try/catch pour valider cet input
+        print(leMot)
+        print(nbSyn)
+        print(methode)
+    except:
+        print("\n*** Svp entrer des paramètres valides: taille de la fenêtre, encodage et chemin vers le texte voulu ***")
+        return 1
+
+    return 0
+
+
 if __name__ == '__main__':
+    quit(main())
 
     """ 
      # Gestion des arguments (tailleFenetre,encodage, chemin)
