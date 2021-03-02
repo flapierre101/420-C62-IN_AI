@@ -32,7 +32,7 @@ class Entraineur:
             liste_mots = [x.lower() for x in liste_mots]
 
             self.motsUnique = self.__creerListeUnique(liste_mots)
-            print(self.motsUnique)
+            
             self.matriceCo = np.zeros((len(self.motsUnique), len(self.motsUnique)))
 
             self.__parcourirMatrice(self.motsUnique, liste_mots)
@@ -66,4 +66,4 @@ class Entraineur:
                     self.matriceCo[motCentral][motsUnique[liste_mots[i - j]]] += 1
                 if not i + j >= len(liste_mots) and motCentral != motsUnique[liste_mots[i + j]]:
                     self.matriceCo[motCentral][motsUnique[liste_mots[i + j]]] += 1
-        print(self.matriceCo)
+        
