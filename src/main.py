@@ -85,13 +85,3 @@ if __name__ == '__main__':
      -- Est-ce qu'on doit prendre en considération les phrases dans la fenêtre? 
      -- Le UI? 
     """
-
-
-
-
-
-
-
-
-
-
