@@ -2,13 +2,14 @@ import numpy as np
 import re
 
 class Recherche:
-    def __init__(self, wordDict, method, searchWord, concArray):
+    def __init__(self, wordDict,concArray, searchWord, nbSyn,method):
         self.verif(searchWord)
         self.stopWord = []
         self.predictMethod = method
         self.wordDict = wordDict
         self.concArray = concArray
         self.prelimResult = []
+        self.nbSynonyme = nbSyn
 
     def getStopWord(self):
         self.stopWord = re.findall('\w+', open('..\src\stop_words.py', 'r', encoding="UTF-8").read())
