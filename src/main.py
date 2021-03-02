@@ -1,7 +1,7 @@
 import re
 import numpy as np
 import math
-from Entraineur import Entraineur
+from entraineur import Entraineur
 
 def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.
