@@ -1,7 +1,7 @@
 from sys import argv
 import numpy as np
-from Entraineur import *
-from Recherche import *
+from entraineur import *
+from recherche import *
 
 
 def main():
@@ -18,7 +18,8 @@ def main():
 
             leMot, nbSyn, methode = rep.split()
 
-            resultat = Recherche(trainer.motsUnique, trainer.matriceCo, leMot, int(methode))
+            research = Recherche(trainer.motsUnique, trainer.matriceCo, leMot, int(methode))
+            ShowResults(research.operation())
 
             if resultat == -1:
                 #print erreurà

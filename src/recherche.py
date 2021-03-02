@@ -20,13 +20,13 @@ class Recherche:
         self.getStopWord()
         for key,value in self.wordDict.items():
             if key != self.leMot:
-                tempo = self.method(self.leMot, value)
+                tempo = self.method(self.motArray, value)
                 self.prelimResult.append((key, tempo))
         #scalaire décroissant - reste croissant
         if self.methodInt == 0:
-            return sorted(self.prelimResult, reverse=True)
+            return sorted(self.prelimResult, reverse=True, key=lambda x: x[1])
         else:
-            return sorted(self.prelimResult)
+            return sorted(self.prelimResult, key=lambda x: x[1])
 
     def getStopWord(self):
         self.stopWord = re.findall('\w+', open('..\src\stop_words.py', 'r', encoding="UTF-8").read())
