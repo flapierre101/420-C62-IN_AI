@@ -20,39 +20,37 @@ from traceback import print_exc
 class Entraineur:
 
     def __init__(self, tailleFenetre, encodage, path):
-        self.fenetre = tailleFenetre
+        self.fenetre = int(tailleFenetre)
         self.encodage = encodage
         self.path = path
-
+        self.matriceCo = None
+        self.motsUnique = None
 
     def entrainement(self):
         try:
             liste_mots = re.findall('\w+', open(self.path, 'r', encoding=self.encodage).read())
             liste_mots = [x.lower() for x in liste_mots]
 
-            motsUnique = self.__creerListeUnique(liste_mots)
-            print(motsUnique)
-            self.matriceCo = np.zeros((len(motsUnique), len(motsUnique)))
+            self.motsUnique = self.__creerListeUnique(liste_mots)
+            print(self.motsUnique)
+            self.matriceCo = np.zeros((len(self.motsUnique), len(self.motsUnique)))
 
-            self.__parcourirMatrice(motsUnique, liste_mots)
+            self.__parcourirMatrice(self.motsUnique, liste_mots)
+
+            return 0
 
 
         except:
+            print("\n*** Svp entrer des paramètres valides: taille de la fenêtre, encodage et chemin vers le texte voulu ***")
             print_exc()
             return 1
-
-
-
-
 
     def __creerListeUnique(self, liste_mots):
         motUnique = {}
         i = 0
 
         for mot in liste_mots:
-            if mot in motUnique:
-                pass
-            else:
+            if mot not in motUnique:
                 motUnique[mot] = i
                 i += 1
 
@@ -68,6 +66,4 @@ class Entraineur:
                     self.matriceCo[motCentral][motsUnique[liste_mots[i - j]]] += 1
                 if not i + j >= len(liste_mots) and motCentral != motsUnique[liste_mots[i + j]]:
                     self.matriceCo[motCentral][motsUnique[liste_mots[i + j]]] += 1
-
-
-
+        print(self.matriceCo)

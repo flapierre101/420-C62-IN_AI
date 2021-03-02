@@ -2,7 +2,7 @@ import numpy as np
 import re
 
 class Recherche:
-    def __init__(self, wordDict,concArray, searchWord, nbSyn,method):
+    def __init__(self, wordDict,concArray, searchWord,method):
         self.verif(searchWord)
         self.stopWord = []
         self.predictMethod = method
