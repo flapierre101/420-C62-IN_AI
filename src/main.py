@@ -1,6 +1,6 @@
 from sys import argv
 import numpy as np
-import re
+from Entraineur import *
 
 def lire(chemin, encodage):
     f = open(chemin, 'r', encoding=encodage)
@@ -53,7 +53,7 @@ if __name__ == '__main__':
      (while not q) blablabla    
             Validation des inputs        
             -Notez le temps de départ 
-            Si pas d'erreur retourné, main initialise recherche : (dict_mot, matrice de coocurences, list_stopword, leMot, nbSyn, methCalc)
+            Si pas d'erreur retourné, main initialise recherche : (dict_mot, matrice de coocurences, leMot, nbSyn, methCalc)
           
           
             #Logique de recherche
