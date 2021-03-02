@@ -2,21 +2,22 @@ import numpy as np
 import re
 
 class Recherche:
-    def __init__(self, wordDict,concArray, searchWord,method):
+    def __init__(self, wordDict, concArray, searchWord, method):
+        self.leMot = searchWord
         self.verif(searchWord)
         self.stopWord = []
         self.predictMethod = method
         self.wordDict = wordDict
         self.concArray = concArray
         self.prelimResult = []
-        self.nbSynonyme = nbSyn
 
     def getStopWord(self):
         self.stopWord = re.findall('\w+', open('..\src\stop_words.py', 'r', encoding="UTF-8").read())
 
     def verif (self, mot):
         if mot not in self.wordDict:
-            return "Ce mot n'est pas présent dans la liste" #maybe try except
+            print("Ce mot n'est pas présent dans la liste")
+            return -1
         else:
             self.index = self.wordDict[mot]
             self.motArray = self.concArray[self.index]
@@ -25,7 +26,7 @@ class Recherche:
         # self.result = np.sum(motA * motB)
         for wArray in self.concArray:
             tempo = np.sum(self.motArray * wArray)
-            self.prelimresult.append((self.wordDict[mot], tempo)) #le mot avec lequel le search word est comparer et sa valeur après calcul
+            self.prelimresult.append((self.wordDict[self.leMot], tempo)) #le mot avec lequel le search word est comparer et sa valeur après calcul
         return self.prelimresult
 
 
