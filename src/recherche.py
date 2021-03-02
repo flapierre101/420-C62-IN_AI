@@ -1,43 +1,57 @@
 import numpy as np
 import re
 
+from numpy.core.fromnumeric import sort
+
 class Recherche:
-    def __init__(self, wordDict,concArray, searchWord, nbSyn,method):
-        self.verif(searchWord)
-        self.stopWord = []
-        self.predictMethod = method
+
+    def __init__(self, wordDict, concMatrix, searchWord, method):
+        self.predictMethod = {0:self.produitScalaire, 1:self.leastSquares, 2:self.cityBlock}
+        self.methodInt = method
+        self.leMot = searchWord
         self.wordDict = wordDict
-        self.concArray = concArray
+        self.stopWord = []
+        self.concMatrix = concMatrix
         self.prelimResult = []
-        self.nbSynonyme = nbSyn
+        self.method = self.predictMethod[method]
+
+
+    def operation (self):
+        self.verif()
+        self.getStopWord()
+        self.method()
+        #scalaire décroissant - reste croissant
+
+        for key,value in self.wordDict.items():
+            if key != self.leMot:
+                tempo = self.method(self.leMot, value)
+                self.prelimResult.append((key, tempo))
+        if self.methodInt == 0:
+            return sorted(self.prelimResult, reverse=True)
+        else:
+            return sorted(self.prelimResult)
 
     def getStopWord(self):
         self.stopWord = re.findall('\w+', open('..\src\stop_words.py', 'r', encoding="UTF-8").read())
 
-    def verif (self, mot):
-        if mot not in self.wordDict:
-            return "Ce mot n'est pas présent dans la liste" #maybe try except
+    def verif (self):
+        if self.leMot not in self.wordDict:
+            print("Ce mot n'est pas présent dans la liste")
+            return -1
         else:
-            self.index = self.wordDict[mot]
-            self.motArray = self.concArray[self.index]
+            self.index = self.wordDict[self.leMot]
+            self.motArray = self.concMatrix[self.index]
 
-    def produitScalaire(self):
-        # self.result = np.sum(motA * motB)
-        for wArray in self.concArray:
-            tempo = np.sum(self.motArray * wArray)
-            self.prelimresult.append((self.wordDict[mot], tempo)) #le mot avec lequel le search word est comparer et sa valeur après calcul
-        return self.prelimresult
+    def produitScalaire(self, motA, motB):
+        return np.sum(motA * motB)
 
 
-    def leastSquares(motA, motB):  # motA & motB = type np.array(1,y)
-        # donne le least square entre 2 mots
-        # return np.sum(motA**2 - motB**2)
-        # return np.sum(np.square(motA) - np.square(motB))
+    def leastSquares(self, motA, motB):  # motA & motB = type np.array(1,y)
         return np.sum(np.square(motA - motB))
 
-    def cityBlock(motA, motB):
+    def cityBlock(self, motA, motB):
         # donne le city-block entre 2 mots
         return np.sum(np.absolute(motA - motB))
 
-    def sort(self):
+    def sortResult(self):
         return sorted(self.prelimResult, key=1)
