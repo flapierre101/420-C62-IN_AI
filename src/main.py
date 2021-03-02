@@ -1,26 +1,24 @@
-import re
+from sys import argv
 import numpy as np
-import math
-import Entraineur
-import Recherche
+from Entraineur import *
+from Recherche import *
 
 
 def main():
     fenetre, enc, chemin = argv[1:]
+    list = [["amour", 5], ["cherie", 3]]
+    ShowResults(list)
     trainer = Entraineur(int(fenetre), enc, chemin)
 
     if trainer.entrainement() == 0:
 
+        rep = input("\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit sclaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
 
-        rep = None
         while rep != 'q':
-            rep = input(
-                "\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit sclaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
+
             leMot, nbSyn, methode = rep.split()
 
-            search = Recherche(trainer.motsUnique, trainer.matriceCo, leMot, int(methode))
-
-            resultat = search.operation()
+            resultat = Recherche(trainer.motsUnique, trainer.matriceCo, leMot, int(methode))
 
             if resultat == -1:
                 #print erreurà
@@ -32,21 +30,28 @@ def main():
                 #afficher les résultats selon le nb de syn avec .pop()
                 pass
 
-
-
-
+            rep = input(
+                "\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit sclaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
 
 
         print("merci")
+        exit()
 
 
     else:
         # afficher erreur
         pass
 
+def ShowResults(resultList):
 
-# Press the green button in the gutter to run the script.
+    print("\n")
+
+    for result in resultList:
+
+        print(f"{result[0]} --> {str(result[1])}")
+
 if __name__ == '__main__':
+    quit(main())
 
     """
      # Gestion des arguments (tailleFenetre,encodage, chemin)

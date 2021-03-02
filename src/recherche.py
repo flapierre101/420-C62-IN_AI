@@ -18,13 +18,11 @@ class Recherche:
     def operation (self):
         self.verif()
         self.getStopWord()
-        self.method()
-        #scalaire décroissant - reste croissant
-
         for key,value in self.wordDict.items():
             if key != self.leMot:
                 tempo = self.method(self.leMot, value)
                 self.prelimResult.append((key, tempo))
+        #scalaire décroissant - reste croissant
         if self.methodInt == 0:
             return sorted(self.prelimResult, reverse=True)
         else:
