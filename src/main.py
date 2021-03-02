@@ -20,7 +20,7 @@ def main():
 
             search = Recherche(trainer.motsUnique, trainer.matriceCo, leMot, int(methode))
 
-            resultat = search.sortResult()
+            resultat = search.operation()
 
             if resultat == -1:
                 #print erreurà

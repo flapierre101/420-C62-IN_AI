@@ -1,7 +1,6 @@
 import numpy as np
 import re
 
-from numpy.core.fromnumeric import sort
 
 class Recherche:
 
@@ -52,6 +51,3 @@ class Recherche:
     def cityBlock(self, motA, motB):
         # donne le city-block entre 2 mots
         return np.sum(np.absolute(motA - motB))
-
-    def sortResult(self):
-        return sorted(self.prelimResult, key=1)
