@@ -2,6 +2,7 @@ from sys import argv
 import numpy as np
 from entraineur import *
 from recherche import *
+from time import time
 
 
 def main():
@@ -14,8 +15,9 @@ def main():
             print("Veuillez reesayer")          
             exit()
          
-
+    trainerT = time()
     trainer = Entraineur(int(fenetre), enc, chemin)
+    print(f'Temps de l\'entraîneur: {time() - trainerT}')
 
     if trainer.entrainement() == 0:
         rep = input("\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit sclaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
@@ -39,7 +41,6 @@ def main():
 
     else:
         print("Veuillez relancer le script")
-        pass
 
 def ShowResults(resultList , nbSyn):
 
