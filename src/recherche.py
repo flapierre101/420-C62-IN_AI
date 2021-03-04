@@ -46,6 +46,5 @@ class Recherche:
     def leastSquares(self, motA, motB):  # motA & motB = type np.array(1,y)
         return np.sum(np.square(motA - motB))
 
-    def cityBlock(self, motA, motB):
-        # donne le city-block entre 2 mots
+    def cityBlock(self, motA, motB): # donne le city-block entre 2 mots        
         return np.sum(np.absolute(motA - motB))
