@@ -17,17 +17,21 @@ def main():
          
     trainerT = time()
     trainer = Entraineur(int(fenetre), enc, chemin)
-    print(f'Temps de l\'entraîneur: {time() - trainerT}')
+
 
     if trainer.entrainement() == 0:
+        print(f'Temps de l\'entraîneur: {round((time() - trainerT),2)} secondes')
         rep = input("\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit sclaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
      
         while rep != 'q':
             try:
                 leMot, nbSyn, methode = rep.split()
 
+                searchT = time()
                 research = Recherche(trainer.motsUnique, trainer.matriceCo, leMot.lower(), int(methode))
                 ShowResults(research.operation(), int(nbSyn))
+                print(f'\nTemps de la recherche: {round((time() - searchT), 2)} secondes')
+
             except:
                 print("\nVous navez pas entrez le nombre suffisents d'arguments, Veuillez reesayer")
            
