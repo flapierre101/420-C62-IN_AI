@@ -48,4 +48,4 @@ class Recherche:
 
     def __cityBlock(self, motA, motB):
         # donne le city-block entre 2 mots
-        return np.sum(np.absolute(motA - motB))
+        return np.sum(np.absolute(motA - motB)) 
