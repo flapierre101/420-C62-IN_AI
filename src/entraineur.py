@@ -47,12 +47,12 @@ class Entraineur:
 
     def __creerListeUnique(self, liste_mots):
         motUnique = {}
-        i = 0
+        
 
         for mot in liste_mots:
             if mot not in motUnique:
-                motUnique[mot] = i
-                i += 1
+                motUnique[mot] = len(motUnique)
+                
 
         return motUnique
 
@@ -66,4 +66,3 @@ class Entraineur:
                     self.matriceCo[motCentral][motsUnique[liste_mots[i - j]]] += 1
                 if not i + j >= len(liste_mots) and motCentral != motsUnique[liste_mots[i + j]]:
                     self.matriceCo[motCentral][motsUnique[liste_mots[i + j]]] += 1
-        
