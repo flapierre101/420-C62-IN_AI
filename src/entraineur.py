@@ -30,20 +30,20 @@ class Entraineur:
         try:
             liste_mots = re.findall('\w+', open(self.path, 'r', encoding=self.encodage).read())
             liste_mots = [x.lower() for x in liste_mots]
-
-            self.motsUnique = self.__creerListeUnique(liste_mots)
-            
-            self.matriceCo = np.zeros((len(self.motsUnique), len(self.motsUnique)))
-
-            self.__parcourirMatrice(self.motsUnique, liste_mots)
-
-            return 0
-
-
         except:
-            print("\n*** Svp entrer des paramètres valides: taille de la fenêtre, encodage et chemin vers le texte voulu ***")
-            print_exc()
+            print("\n*** Fichier non reconnu, veuillez entrez un chemin valide et reesayer ***")            
             return 1
+
+        self.motsUnique = self.__creerListeUnique(liste_mots)
+        
+        self.matriceCo = np.zeros((len(self.motsUnique), len(self.motsUnique)))
+
+        self.__parcourirMatrice(self.motsUnique, liste_mots)
+
+        return 0
+
+
+     
 
     def __creerListeUnique(self, liste_mots):
         motUnique = {}

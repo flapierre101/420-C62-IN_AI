@@ -5,34 +5,40 @@ from recherche import *
 
 
 def main():
-    fenetre, enc, chemin = argv[1:]
-    #list = [["amour", 5], ["cherie", 3]]
-    #ShowResults(list)
+    
+    
+    try:
+        fenetre, enc, chemin = argv[1:]    
+    except:
+            print("\n*** Svp entrer des paramètres valides: taille de la fenêtre, encodage et chemin vers le texte voulu ***")  
+            print("Veuillez reesayer")          
+            exit()
+         
+
     trainer = Entraineur(int(fenetre), enc, chemin)
 
     if trainer.entrainement() == 0:
-
         rep = input("\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit sclaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
-
+     
         while rep != 'q':
+            try:
+                leMot, nbSyn, methode = rep.split()
 
-            leMot, nbSyn, methode = rep.split()
-
-            research = Recherche(trainer.motsUnique, trainer.matriceCo, leMot.lower(), int(methode))
-            ShowResults(research.operation(), int(nbSyn))
-
+                research = Recherche(trainer.motsUnique, trainer.matriceCo, leMot.lower(), int(methode))
+                ShowResults(research.operation(), int(nbSyn))
+            except:
+                print("\nVous navez pas entrez le nombre suffisents d'arguments, Veuillez reesayer")
            
 
             rep = input(
                 "\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit sclaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
 
-
-        print("merci")
+        print("\nmerci")
         exit()
 
 
     else:
-        # afficher erreur
+        print("Veuillez relancer le script")
         pass
 
 def ShowResults(resultList , nbSyn):
