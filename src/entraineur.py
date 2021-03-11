@@ -56,8 +56,21 @@ class Entraineur:
 
         return motUnique
 
-    def __parcourirMatrice(self, motsUnique, liste_mots):
 
+
+
+    def __parcourirMatrice(self, motsUnique, liste_mots): # version en utilisant la symétrie, pas besoin de regarder l'index précédent. Gain de 0.05 secondes. 
+        moitieF = self.fenetre // 2
+        for i in range(len(liste_mots)):
+            motCentral = motsUnique[liste_mots[i]]
+            for j in range(1, moitieF + 1):
+                if not i + j >= len(liste_mots) and motCentral != motsUnique[liste_mots[i + j]]:
+                    self.matriceCo[motCentral][motsUnique[liste_mots[i + j]]] += 1
+                    self.matriceCo[motsUnique[liste_mots[i + j]]][motCentral] += 1
+
+
+""" Version 1 : Cherchant à l'avant et derrière dans l'index
+    def __parcourirMatrice(self, motsUnique, liste_mots):
         moitieF = self.fenetre // 2
         for i in range(len(liste_mots)):
             motCentral = motsUnique[liste_mots[i]]
@@ -66,3 +79,4 @@ class Entraineur:
                     self.matriceCo[motCentral][motsUnique[liste_mots[i - j]]] += 1
                 if not i + j >= len(liste_mots) and motCentral != motsUnique[liste_mots[i + j]]:
                     self.matriceCo[motCentral][motsUnique[liste_mots[i + j]]] += 1
+"""

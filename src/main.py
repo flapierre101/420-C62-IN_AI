@@ -6,15 +6,21 @@ from time import time
 
 
 def main():
-    
-    
+
     try:
         fenetre, enc, chemin = argv[1:]    
     except:
             print("\n*** Svp entrer des paramètres valides: taille de la fenêtre, encodage et chemin vers le texte voulu ***")  
-            print("Veuillez reesayer")          
-            exit()
-         
+            repInit = input("Veuillez reesayer : \n")
+            while len(repInit.split()) != 3:
+                try: 
+                    fenetre, enc, chemin =  repInit.split()
+                
+                except:
+                        print("\nVous navez ENCORE pas entrez le nombre suffisents d'arguments, Veuillez reesayer")
+                        repInit = input("*** taille de la fenêtre, encodage et chemin relatif vers le texte voulu ***\n")
+            fenetre, enc, chemin =  repInit.split()
+
     trainerT = time()
     trainer = Entraineur(int(fenetre), enc, chemin)
 

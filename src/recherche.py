@@ -24,9 +24,9 @@ class Recherche:
                 self.prelimResult.append((mot, tempo))
         #scalaire décroissant - reste croissant
         if self.methodInt == 0:
-            return sorted(self.prelimResult, reverse=True, key=lambda x: x[1])
+            return sorted(self.prelimResult, reverse=True, key=lambda x: x[1]) #  lambda x: x[1] :Trier selon l'index [1] du tuple, soit les scores. 
         else:
-            return sorted(self.prelimResult,  key=lambda x: x[1])
+            return sorted(self.prelimResult,  key=lambda x: x[1]) 
 
     def __getStopWord(self):
         self.stopWord = re.findall('\w+', open('..\src\stop_words.py', 'r', encoding="UTF-8").read())
