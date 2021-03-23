@@ -1,32 +1,36 @@
 import sqlite3
 from traceback import print_exc
 
+# TODO creer des index
+
 CHEMINBD = 'maBD.db'
 ACTIVER_FK = 'PRAGMA foreign_keys = 1'
 
 CREER_D = '''
-CREATE TABLE IF NOT EXISTS departement
+CREATE TABLE IF NOT EXISTS word_dict
 (
     id  INT PRIMARY KEY NOT NULL,
-    nom CHAR(15) NOT NULL
+    mot CHAR(24) NOT NULL
 )
 '''
-DROP_D = 'DROP TABLE IF EXISTS departement'
-INSERT_D = 'INSERT INTO departement VALUES(?, ?)'
+DROP_D = 'DROP TABLE IF EXISTS word_dict'
+INSERT_D = 'INSERT INTO word_dict VALUES(?, ?)'
 
 CREER_E = '''
-CREATE TABLE IF NOT EXISTS employe
+CREATE TABLE IF NOT EXISTS cooc_mat
 (
-    id  INT NOT NULL,
-    id_dept INT NOT NULL,
-    nom CHAR(15) NOT NULL,
-    PRIMARY KEY(id),
-    FOREIGN KEY(id_dept) REFERENCES departement(id)
+    mot1 INT NOT NULL,
+    mot2 INT NOT NULL,
+    frequence int NOT NULL,
+
+    PRIMARY KEY(mot1, mot2),
+    FOREIGN KEY(mot1) REFERENCES word_dict(id)
+    FOREIGN KEY(mot2) REFERENCES word_dict(id)
 )
 '''
-DROP_E = 'DROP TABLE IF EXISTS employe'
-INSERT_E = 'INSERT INTO employe VALUES(?, ?, ?)'
-DELETE_E = 'DELETE FROM employe WHERE nom = ?'
+DROP_E = 'DROP TABLE IF EXISTS cooc_mat'
+INSERT_E = 'INSERT INTO cooc_mat VALUES(?, ?, ?)'
+DELETE_E = 'DELETE FROM cooc_mat WHERE nom = ?'
 
 def connecter():
     connexion = sqlite3.connect(CHEMINBD)
