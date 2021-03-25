@@ -1,4 +1,6 @@
+import sys
 from sys import argv
+import argparse
 import numpy as np
 from entraineur import *
 from recherche import *
@@ -16,7 +18,60 @@ TODO Modifier recherche pour rechercheBD
  """
 
 def main():
+    fenetre = enc = chemin = None
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-e', dest='command', action='store_const', const='entrainement', nargs=3)
+    parser.add_argument('-r', dest='command', action='store_const', const='recherche')
+    parser.add_argument('-t', dest='taille', action='store', type=int)
+    parser.add_argument('--enc', dest='encodage', action='store')
+    parser.add_argument('--chemin', dest='chemin', action='store')
 
+    args = parser.parse_args()
+
+    if args.command == 'entrainement':
+        try:
+            fenetre = args.__getattribute__('taille')
+            enc = args.__getattribute__('encodage')
+            chemin = args.__getattribute__('chemin')
+        except:
+            print("\nVous navez pas entrez le nombre suffisents d'arguments, Veuillez reesayer")
+            exit()
+
+        trainerT = time()
+        trainer = Entraineur(fenetre, enc, chemin)
+
+        if trainer.entrainement() == 0:
+            print(f'Temps de l\'entraîneur: {round((time() - trainerT), 2)} secondes')
+            rep = input(
+                "\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit sclaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
+
+            while rep != 'q':
+                try:
+                    leMot, nbSyn, methode = rep.split()
+
+                    searchT = time()
+                    research = Recherche(trainer.motsUnique, trainer.matriceCo, leMot.lower(), int(methode))
+                    ShowResults(research.operation(), int(nbSyn))
+                    print(f'\nTemps de la recherche: {round((time() - searchT), 2)} secondes')
+
+                except:
+                    print("\nVous navez pas entrez le nombre suffisents d'arguments, Veuillez reesayer")
+
+                rep = input(
+                    "\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit sclaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
+
+            print("\nmerci")
+            exit()
+
+
+        else:
+            print("Veuillez relancer le script")
+    elif args.command == 'recherche':
+        pass
+
+    elif args.command == 'resetDB':
+        pass
+"""
     try:
         fenetre, enc, chemin = argv[1:]    
     except:
@@ -30,6 +85,7 @@ def main():
                         print("\nVous navez ENCORE pas entrez le nombre suffisents d'arguments, Veuillez reesayer")
                         repInit = input("*** taille de la fenêtre, encodage et chemin relatif vers le texte voulu ***\n")
             fenetre, enc, chemin =  repInit.split()
+
 
     trainerT = time()
     trainer = Entraineur(int(fenetre), enc, chemin)
@@ -61,6 +117,7 @@ def main():
 
     else:
         print("Veuillez relancer le script")
+"""
 
 def ShowResults(resultList , nbSyn):
 
@@ -71,6 +128,34 @@ def ShowResults(resultList , nbSyn):
         print(f"{result[0]} --> {str(result[1])}")
         if i == nbSyn:
             break
+
+def StartTraining():
+    trainerT = time()
+    trainer = Entraineur(int(fenetre), enc, chemin)
+
+    if trainer.entrainement() == 0:
+        print(f'Temps de l\'entraîneur: {round((time() - trainerT), 2)} secondes')
+        rep = input(
+            "\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit sclaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
+
+        while rep != 'q':
+            try:
+                leMot, nbSyn, methode = rep.split()
+
+                searchT = time()
+                research = Recherche(trainer.motsUnique, trainer.matriceCo, leMot.lower(), int(methode))
+                ShowResults(research.operation(), int(nbSyn))
+                print(f'\nTemps de la recherche: {round((time() - searchT), 2)} secondes')
+
+            except:
+                print("\nVous navez pas entrez le nombre suffisents d'arguments, Veuillez reesayer")
+
+            rep = input(
+                "\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit sclaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
+
+        print("\nmerci")
+        exit()
+
 
 if __name__ == '__main__':
     quit(main())
