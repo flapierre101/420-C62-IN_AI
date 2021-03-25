@@ -85,9 +85,8 @@ class Entraineur:
         print(index)
         print(len(index[0]))
         for k in range(len(index[0])):
-                listetuples.append((index[0][k], index[1][k], self.matriceCo[index[0][k]][index[1][k]]))
+                listetuples.append((int(index[0][k]), int(index[1][k]), self.matriceCo[index[0][k]][index[1][k]]))
 
-        
 
         self.connexion.insert_mat(listetuples)
 
