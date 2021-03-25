@@ -1,6 +1,6 @@
 from sys import argv
 import numpy as np
-from entraineur import *
+from entrainementBD import *
 from recherche import *
 from time import time
 
@@ -28,7 +28,7 @@ def main():
                 
                 except:
                         print("\nVous navez ENCORE pas entrez le nombre suffisents d'arguments, Veuillez reesayer")
-                        repInit = input("*** taille de la fenêtre, encodage et chemin relatif vers le texte voulu ***\n")
+                        repInit = input("*** taille d7 utf-8 .\textes\DonQuichotteUTF8.txt la fenêtre, encodage et chemin relatif vers le texte voulu ***\n")
             fenetre, enc, chemin =  repInit.split()
 
     trainerT = time()
