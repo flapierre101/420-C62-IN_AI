@@ -28,7 +28,7 @@ class Entraineur:
         self.matriceCo = None
         self.motsUnique = None
         self.connexion = ConnexionDB()
-        self.connexion.drop_tables()
+        #self.connexion.drop_tables()
         self.connexion.creer_tables()
 
     def entrainement(self):
@@ -77,16 +77,22 @@ class Entraineur:
             for j in range(1, moitieF + 1):
                 if not i + j >= len(liste_mots) and motCentral != motsUnique[liste_mots[i + j]]:
                     self.matriceCo[motCentral][motsUnique[liste_mots[i + j]]] += 1
-                    self.matriceCo[motsUnique[liste_mots[i + j]]][motCentral] += 1
+                    #self.matriceCo[motsUnique[liste_mots[i + j]]][motCentral] += 1 # seulement besoin de stocker la moitié d'une matrice symétique!
         
-        listetuples = []
-        index = ((),)
-        index = self.matriceCo.nonzero()   
-        print(index)
-        print(len(index[0]))
-        for k in range(len(index[0])):
-                listetuples.append((int(index[0][k]), int(index[1][k]), self.matriceCo[index[0][k]][index[1][k]]))
 
+
+
+
+
+
+        listetuples = []        
+
+        index =  np.transpose(np.nonzero(self.matriceCo))   
+      
+        for k in range(len(index)):
+            listetuples.append((int(index[k][0]), int(index[k][1]), self.matriceCo[index[k][0]][index[k][1]]))
+        
+        
 
         self.connexion.insert_mat(listetuples)
 
