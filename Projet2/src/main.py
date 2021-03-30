@@ -20,21 +20,26 @@ TODO Modifier recherche pour rechercheBD
 def main():
     fenetre = enc = chemin = None
     parser = argparse.ArgumentParser()
-    parser.add_argument('-e', dest='command', action='store_const', const='entrainement', nargs=3)
-    parser.add_argument('-r', dest='command', action='store_const', const='recherche')
-    parser.add_argument('-t', dest='taille', action='store', type=int)
-    parser.add_argument('--enc', dest='encodage', action='store')
-    parser.add_argument('--chemin', dest='chemin', action='store')
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('-e', dest='command', action='store_const', const='entrainement')
+    group.add_argument('-r', dest='command', action='store_const', const='recherche')
+    group.add_argument('-b', dest='command', action='store_const', const='resetDB')
 
-    args = parser.parse_args()
+    args, option_args = parser.parse_known_args()
 
     if args.command == 'entrainement':
+        parser.add_argument('-t', dest='taille', action='store', type=int, required=True)
+        parser.add_argument('--enc', dest='encodage', action='store', required=True)
+        parser.add_argument('--chemin', dest='chemin', action='store', required=True)
+
+        parser.parse_args(option_args, namespace=args)
+
         try:
             fenetre = args.__getattribute__('taille')
             enc = args.__getattribute__('encodage')
             chemin = args.__getattribute__('chemin')
-        except:
-            print("\nVous navez pas entrez le nombre suffisents d'arguments, Veuillez reesayer")
+        except argparse.ArgumentError or argparse.ArgumentTypeError:
+            print("\nVeuillez entrer des arguments valides: taille de la fenêtre, encodage et chemin")
             exit()
 
         trainerT = time()
@@ -67,57 +72,25 @@ def main():
         else:
             print("Veuillez relancer le script")
     elif args.command == 'recherche':
-        pass
+        parser.add_argument('-t', dest='taille', action='store', type=int, required=True)
+
+        parser.parse_args(option_args, namespace=args)
+
+        try:
+            fenetre = args.__getattribute__('taille')
+            print("Taille: ", fenetre)
+        except argparse.ArgumentError or argparse.ArgumentTypeError:
+            print("\nVeuillez entrer une taille de recherche valide (nombre)")
 
     elif args.command == 'resetDB':
-        pass
-"""
-    try:
-        fenetre, enc, chemin = argv[1:]    
-    except:
-            print("\n*** Svp entrer des paramètres valides: taille de la fenêtre, encodage et chemin vers le texte voulu ***")  
-            repInit = input("Veuillez reesayer : \n")
-            while len(repInit.split()) != 3:
-                try: 
-                    fenetre, enc, chemin =  repInit.split()
-                
-                except:
-                        print("\nVous navez ENCORE pas entrez le nombre suffisents d'arguments, Veuillez reesayer")
-                        repInit = input("*** taille de la fenêtre, encodage et chemin relatif vers le texte voulu ***\n")
-            fenetre, enc, chemin =  repInit.split()
 
+        unknown = argv[2:]
+        # si autre arguments entrés, mis dans une liste
 
-    trainerT = time()
-    trainer = Entraineur(int(fenetre), enc, chemin)
-
-
-    if trainer.entrainement() == 0:
-        print(f'Temps de l\'entraîneur: {round((time() - trainerT),2)} secondes')
-        rep = input("\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit sclaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
-     
-        while rep != 'q':
-            try:
-                leMot, nbSyn, methode = rep.split()
-
-                searchT = time()
-                research = Recherche(trainer.motsUnique, trainer.matriceCo, leMot.lower(), int(methode))
-                ShowResults(research.operation(), int(nbSyn))
-                print(f'\nTemps de la recherche: {round((time() - searchT), 2)} secondes')
-
-            except:
-                print("\nVous navez pas entrez le nombre suffisents d'arguments, Veuillez reesayer")
-           
-
-            rep = input(
-                "\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit sclaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
-
-        print("\nmerci")
-        exit()
-
-
-    else:
-        print("Veuillez relancer le script")
-"""
+        if len(unknown) == 0:
+            print("DB HAS BEEN RESET")
+        else:
+            print("\nInvalide - l'option '-b' ne prend aucun argument")
 
 def ShowResults(resultList , nbSyn):
 
@@ -129,32 +102,6 @@ def ShowResults(resultList , nbSyn):
         if i == nbSyn:
             break
 
-def StartTraining():
-    trainerT = time()
-    trainer = Entraineur(int(fenetre), enc, chemin)
-
-    if trainer.entrainement() == 0:
-        print(f'Temps de l\'entraîneur: {round((time() - trainerT), 2)} secondes')
-        rep = input(
-            "\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit sclaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
-
-        while rep != 'q':
-            try:
-                leMot, nbSyn, methode = rep.split()
-
-                searchT = time()
-                research = Recherche(trainer.motsUnique, trainer.matriceCo, leMot.lower(), int(methode))
-                ShowResults(research.operation(), int(nbSyn))
-                print(f'\nTemps de la recherche: {round((time() - searchT), 2)} secondes')
-
-            except:
-                print("\nVous navez pas entrez le nombre suffisents d'arguments, Veuillez reesayer")
-
-            rep = input(
-                "\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit sclaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
-
-        print("\nmerci")
-        exit()
 
 
 if __name__ == '__main__':
