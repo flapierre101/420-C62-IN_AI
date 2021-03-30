@@ -77,21 +77,31 @@ class Entraineur:
     def __parcourirMatrice(self, motsUnique, liste_mots): # version en utilisant la symétrie, pas besoin de regarder l'index précédent. Gain de 0.05 secondes. 
         moitieF = self.fenetre // 2
 
-        dict_cooc = {}
+        
 
         for i in range(len(liste_mots)):
             motCentral = motsUnique[liste_mots[i]]
             for j in range(1, moitieF + 1):
                 if not i + j >= len(liste_mots) and motCentral != motsUnique[liste_mots[i + j]]:
                     self.matriceCo[motCentral][motsUnique[liste_mots[i + j]]] += 1
-                    #self.matriceCo[motsUnique[liste_mots[i + j]]][motCentral] += 1 # seulement besoin de stocker la moitié d'une matrice symétique!
-                    dict_cooc[(motCentral, motsUnique[liste_mots[i + j]])] = self.matriceCo[motCentral][motsUnique[liste_mots[i + j]]]
+                    self.matriceCo[motsUnique[liste_mots[i + j]]][motCentral] += 1 # seulement besoin de stocker la moitié d'une matrice symétique!
+                    #dict_cooc[(motCentral, motsUnique[liste_mots[i + j]])] = self.matriceCo[motCentral][motsUnique[liste_mots[i + j]]]
+                    #dict_cooc[(motsUnique[liste_mots[i + j]], motCentral)] = self.matriceCo[motCentral][motsUnique[liste_mots[i + j]]]
 
 
+
+        listetuples = []   
+        
+        index =  np.transpose(np.nonzero(np.triu(self.matriceCo, 0)))   
+      
+        for k in range(len(index)):
+            listetuples.append((int(index[k][0]), int(index[k][1]), self.matriceCo[index[k][0]][index[k][1]]))
+
+        """        
         listetuples = []        
         for key in dict_cooc:
             listetuples.append((key[0], key[1], dict_cooc[(key[0], key[1])]))
-
+        """
         self.connexion.insert_mat(listetuples)
 
 
