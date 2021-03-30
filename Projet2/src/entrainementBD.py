@@ -8,13 +8,13 @@ from time import time
 """
      # Gestion des arguments (tailleFenetre,encodage, chemin)
      Affichage des erreurs si arguments invalide
-     
-     
+
+
      # Dans le init, se créer une instance d'Entraineur
-     
+
      # Logique d'entraineur :
-     - Créer liste des mots uniques 
-     - Créer liste des stop-word avec un count de la liste des mots les plus courants** 
+     - Créer liste des mots uniques
+     - Créer liste des stop-word avec un count de la liste des mots les plus courants**
      - Créer matrice selon taille de la taille du dictionnaire
      - Créer dictionnaire{Str:Mot, Int:Index}
     """
@@ -29,8 +29,8 @@ class Entraineur:
         self.matriceCo = None
         self.motsUnique = None
         self.connexion = ConnexionDB()
-        #self.connexion.drop_tables()
         self.connexion.creer_tables()
+
 
     def entrainement(self):
         trainerT = time()
@@ -38,27 +38,28 @@ class Entraineur:
             liste_mots = re.findall('\w+', open(self.path, 'r', encoding=self.encodage).read())
             liste_mots = [x.lower() for x in liste_mots]
         except:
-            print("\n*** Fichier non reconnu, veuillez entrez un chemin valide et reesayer ***")            
+            print("\n*** Fichier non reconnu, veuillez entrez un chemin valide et reesayer ***")
             return 1
 
-        self.motsUnique = self.__creerListeUnique(liste_mots)     
-        
+        self.motsUnique = self.__creerListeUnique(liste_mots)
+
         self.matriceCo = self.connexion.get_cooc_mat(len(self.motsUnique))
 
         self.__parcourirMatrice(self.motsUnique, liste_mots)
 
         print(f'Temps de l\'entraîneur: {round((time() - trainerT), 2)} secondes')
-
+        self.connexion.cur.close()
+        self.connexion.connexion.close()
         return 0
 
 
-     
+
 
     def __creerListeUnique(self, liste_mots):
-       
+
         motUnique = self.connexion.get_words()
-        
-        
+
+
         listetuples = []
 
         for mot in liste_mots:
@@ -66,7 +67,7 @@ class Entraineur:
                 listetuples.append((len(motUnique), mot))
                 motUnique[mot] = len(motUnique)
 
-        
+
         self.connexion.insert_new_word(listetuples)
 
         return motUnique
@@ -74,10 +75,10 @@ class Entraineur:
 
 
 
-    def __parcourirMatrice(self, motsUnique, liste_mots): # version en utilisant la symétrie, pas besoin de regarder l'index précédent. Gain de 0.05 secondes. 
+    def __parcourirMatrice(self, motsUnique, liste_mots): # version en utilisant la symétrie, pas besoin de regarder l'index précédent. Gain de 0.05 secondes.
         moitieF = self.fenetre // 2
 
-        
+
 
         for i in range(len(liste_mots)):
             motCentral = motsUnique[liste_mots[i]]
@@ -90,15 +91,15 @@ class Entraineur:
 
 
 
-        listetuples = []   
-        
-        index =  np.transpose(np.nonzero(np.triu(self.matriceCo, 0)))   
-      
+        listetuples = []
+
+        index =  np.transpose(np.nonzero(np.triu(self.matriceCo, 0)))
+
         for k in range(len(index)):
             listetuples.append((int(index[k][0]), int(index[k][1]), self.matriceCo[index[k][0]][index[k][1]]))
 
-        """        
-        listetuples = []        
+        """
+        listetuples = []
         for key in dict_cooc:
             listetuples.append((key[0], key[1], dict_cooc[(key[0], key[1])]))
         """
