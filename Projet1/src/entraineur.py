@@ -68,6 +68,7 @@ class Entraineur:
                     self.matriceCo[motCentral][motsUnique[liste_mots[i + j]]] += 1
                     self.matriceCo[motsUnique[liste_mots[i + j]]][motCentral] += 1
 
+        #print(self.matriceCo)
 
 """ Version 1 : Cherchant à l'avant et derrière dans l'index
     def __parcourirMatrice(self, motsUnique, liste_mots):
