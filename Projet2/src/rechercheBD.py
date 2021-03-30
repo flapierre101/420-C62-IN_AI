@@ -1,16 +1,18 @@
 import numpy as np
 import re
+from connexionDB import *
 
 
 class Recherche:
 
-    def __init__(self, wordDict, concMatrix, searchWord, method):
+    def __init__(self, searchWord, method):
         self.predictMethod = {0:self.__produitScalaire, 1:self.__leastSquares, 2:self.__cityBlock}
         self.methodInt = method
+        self.connexion = ConnexionDB()
         self.leMot = searchWord
-        self.wordDict = wordDict
+        self.wordDict = self.connexion.get_words()
         self.stopWord = []
-        self.concMatrix = concMatrix
+        self.concMatrix = self.connexion.get_cooc_mat_complete(len(self.wordDict))
         self.prelimResult = []
         self.method = self.predictMethod[method]
 

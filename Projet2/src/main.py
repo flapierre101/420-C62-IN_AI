@@ -3,8 +3,9 @@ from sys import argv
 import argparse
 import numpy as np
 from entrainementBD import *
-from recherche import *
+from rechercheBD import *
 from time import time
+from traceback import print_exc
 
 """
  TODO Fichier connexion - avec fonctions d'accès, création de table - TRÈS similaire à l'exemple du prof
@@ -42,35 +43,10 @@ def main():
             print("\nVeuillez entrer des arguments valides: taille de la fenêtre, encodage et chemin")
             exit()
 
-        trainerT = time()
+
         trainer = Entraineur(fenetre, enc, chemin)
+        trainer.entrainement()
 
-        if trainer.entrainement() == 0:
-            print(f'Temps de l\'entraîneur: {round((time() - trainerT), 2)} secondes')
-            rep = input(
-                "\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit sclaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
-
-            while rep != 'q':
-                try:
-                    leMot, nbSyn, methode = rep.split()
-
-                    searchT = time()
-                    research = Recherche(trainer.motsUnique, trainer.matriceCo, leMot.lower(), int(methode))
-                    ShowResults(research.operation(), int(nbSyn))
-                    print(f'\nTemps de la recherche: {round((time() - searchT), 2)} secondes')
-
-                except:
-                    print("\nVous navez pas entrez le nombre suffisents d'arguments, Veuillez reesayer")
-
-                rep = input(
-                    "\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit sclaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
-
-            print("\nmerci")
-            exit()
-
-
-        else:
-            print("Veuillez relancer le script")
     elif args.command == 'recherche':
         parser.add_argument('-t', dest='taille', action='store', type=int, required=True)
 
@@ -79,6 +55,27 @@ def main():
         try:
             fenetre = args.__getattribute__('taille')
             print("Taille: ", fenetre)
+            rep = input(
+                "\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit sclaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
+
+            while rep != 'q':
+                try:
+                    leMot, nbSyn, methode = rep.split()
+
+                    searchT = time()
+                    research = Recherche(leMot.lower(), int(methode))
+                    ShowResults(research.operation(), int(nbSyn))
+                    print(f'\nTemps de la recherche: {round((time() - searchT), 2)} secondes')
+
+                except:
+                    print_exc()
+                    #print("\nVous navez pas entrez le nombre suffisents d'arguments, Veuillez reesayer")
+
+                rep = input(
+                    "\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit sclaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
+
+            print("\nmerci")
+            exit()
         except argparse.ArgumentError or argparse.ArgumentTypeError:
             print("\nVeuillez entrer une taille de recherche valide (nombre)")
 
