@@ -3,6 +3,7 @@ import numpy as np
 from traceback import print_exc
 
 from connexionDB import *
+from time import time
 
 """
      # Gestion des arguments (tailleFenetre,encodage, chemin)
@@ -32,6 +33,7 @@ class Entraineur:
         self.connexion.creer_tables()
 
     def entrainement(self):
+        trainerT = time()
         try:
             liste_mots = re.findall('\w+', open(self.path, 'r', encoding=self.encodage).read())
             liste_mots = [x.lower() for x in liste_mots]
@@ -44,6 +46,8 @@ class Entraineur:
         self.matriceCo = self.connexion.get_cooc_mat(len(self.motsUnique))
 
         self.__parcourirMatrice(self.motsUnique, liste_mots)
+
+        print(f'Temps de l\'entraîneur: {round((time() - trainerT), 2)} secondes')
 
         return 0
 
