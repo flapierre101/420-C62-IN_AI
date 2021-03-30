@@ -2,7 +2,7 @@ import sys
 from sys import argv
 import argparse
 import numpy as np
-from entraineur import *
+from entrainementBD import *
 from recherche import *
 from time import time
 
