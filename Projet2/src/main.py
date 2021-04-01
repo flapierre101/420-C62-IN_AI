@@ -18,20 +18,27 @@ TODO Modifier recherche pour rechercheBD
 
  """
 
+
 def main():
     fenetre = enc = chemin = None
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('-e', dest='command', action='store_const', const='entrainement')
-    group.add_argument('-r', dest='command', action='store_const', const='recherche')
-    group.add_argument('-b', dest='command', action='store_const', const='resetDB')
+    group.add_argument('-e', dest='command',
+                       action='store_const', const='entrainement')
+    group.add_argument('-r', dest='command',
+                       action='store_const', const='recherche')
+    group.add_argument('-b', dest='command',
+                       action='store_const', const='resetDB')
 
     args, option_args = parser.parse_known_args()
 
     if args.command == 'entrainement':
-        parser.add_argument('-t', dest='taille', action='store', type=int, required=True)
-        parser.add_argument('--enc', dest='encodage', action='store', required=True)
-        parser.add_argument('--chemin', dest='chemin', action='store', required=True)
+        parser.add_argument('-t', dest='taille',
+                            action='store', type=int, required=True)
+        parser.add_argument('--enc', dest='encodage',
+                            action='store', required=True)
+        parser.add_argument('--chemin', dest='chemin',
+                            action='store', required=True)
 
         parser.parse_args(option_args, namespace=args)
 
@@ -40,15 +47,16 @@ def main():
             enc = args.__getattribute__('encodage')
             chemin = args.__getattribute__('chemin')
         except argparse.ArgumentError or argparse.ArgumentTypeError:
-            print("\nVeuillez entrer des arguments valides: taille de la fenêtre, encodage et chemin")
+            print(
+                "\nVeuillez entrer des arguments valides: taille de la fenêtre, encodage et chemin")
             exit()
-
 
         trainer = Entraineur(fenetre, enc, chemin)
         trainer.entrainement()
 
     elif args.command == 'recherche':
-        parser.add_argument('-t', dest='taille', action='store', type=int, required=True)
+        parser.add_argument('-t', dest='taille',
+                            action='store', type=int, required=True)
 
         parser.parse_args(option_args, namespace=args)
 
@@ -65,7 +73,8 @@ def main():
                     searchT = time()
                     research = Recherche(leMot.lower(), int(methode))
                     ShowResults(research.operation(), int(nbSyn))
-                    print(f'\nTemps de la recherche: {round((time() - searchT), 2)} secondes')
+                    print(
+                        f'\nTemps de la recherche: {round((time() - searchT), 2)} secondes')
 
                 except:
                     print_exc()
@@ -89,18 +98,17 @@ def main():
         else:
             print("\nInvalide - l'option '-b' ne prend aucun argument")
 
-def ShowResults(resultList , nbSyn):
+
+def ShowResults(resultList, nbSyn):
 
     print("\n")
     i = 0
     for result in resultList:
-        i+= 1
+        i += 1
         print(f"{result[0]} --> {str(result[1])}")
         if i == nbSyn:
             break
 
 
-
 if __name__ == '__main__':
     quit(main())
-
