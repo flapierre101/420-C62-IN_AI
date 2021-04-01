@@ -76,9 +76,9 @@ class Entraineur:
         moitieF = self.fenetre // 2
 
         dict_cooc  = {}
+       
+        dict_vieux =  self.connexion.get_cooc_mat()
 
-        dict_cooc_vieux =  self.connexion.get_cooc_mat2()
-        #self.matriceCo =  self.connexion.get_cooc_mat(len(motsUnique))
 
         for i in range(len(liste_mots)):
             motCentral = motsUnique[liste_mots[i]]
@@ -98,13 +98,14 @@ class Entraineur:
                         dict_cooc[(indexcooc, motCentral)] = 1
                     else:
                         dict_cooc[(indexcooc, motCentral)] += 1
-                    #dict_cooc[(motCentral, motsUnique[liste_mots[i + j]])] = self.matriceCo[motCentral][motsUnique[liste_mots[i + j]]]
-                    #dict_cooc[(motsUnique[liste_mots[i + j]], motCentral)] = self.matriceCo[motCentral][motsUnique[liste_mots[i + j]]]
 
 
-        # comparer dict_vieux avec nouveau dict :
 
-        listetuples = []   
+        # comparer dict_vieux avec nouveau dict  (dict_cooc):
+        
+
+        listetuplesupdate = []   
+        listetuplesnew = []  
         
         """        
         index =  np.transpose(np.nonzero(np.triu(self.matriceCo, 0)))   
@@ -114,22 +115,21 @@ class Entraineur:
 
         listetuples = []        
         """
+
+        dict_update = {}
+        dict_new = {}
+
         for key in dict_cooc:
-            listetuples.append((key[0], key[1], dict_cooc[(key[0], key[1])]))
-
-        #self.connexion.insert_mat(listetuples)
-
-
-
-
-""" Version 1 : Cherchant à l'avant et derrière dans l'index
-    def __parcourirMatrice(self, motsUnique, liste_mots):
-        moitieF = self.fenetre // 2
-        for i in range(len(liste_mots)):
-            motCentral = motsUnique[liste_mots[i]]
-            for j in range(1, moitieF + 1):
-                if not i - j < 0 and motCentral != motsUnique[liste_mots[i - j]]:
-                    self.matriceCo[motCentral][motsUnique[liste_mots[i - j]]] += 1
-                if not i + j >= len(liste_mots) and motCentral != motsUnique[liste_mots[i + j]]:
-                    self.matriceCo[motCentral][motsUnique[liste_mots[i + j]]] += 1
-"""
+            if (key[0], key[1]) in dict_vieux:
+                dict_update[key[0], key[1]] = dict_cooc[key[0], key[1]] + dict_vieux[key[0], key[1]]
+                listetuplesupdate.append((dict_cooc[(key[0], key[1])], key[0], key[1]))
+            elif (key[1], key[0]) in dict_new:
+                listetuplesnew.append((key[0], key[1], dict_cooc[(key[0], key[1])]))
+                dict_new[(key[0],key[1])] = dict_cooc[(key[0], key[1])]
+            else:
+                listetuplesnew.append((key[0], key[1], dict_cooc[(key[0], key[1])]))
+        
+        print("longueur du dict", len(dict_vieux))
+        self.connexion.insert_mat(listetuplesnew)
+        if len(dict_vieux) > 1:
+            self.connexion.update_mat(listetuplesupdate)

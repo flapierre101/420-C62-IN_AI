@@ -31,6 +31,16 @@ CREATE TABLE IF NOT EXISTS cooc_mat
 '''
 DROP_MAT = 'DROP TABLE IF EXISTS cooc_mat'
 INSERT_MAT = 'INSERT INTO cooc_mat VALUES(?, ?, ?)'
+
+UPDATE_MAT = '''
+        UPDATE cooc_mat
+            SET 
+                frequence = ?
+            WHERE
+                mot1 = ? and
+                mot2 = ?
+'''
+
 DELETE_MAT = 'DELETE FROM cooc_mat WHERE frequence = 0'
 
    
@@ -58,12 +68,12 @@ class ConnexionDB():
         self.cur.execute(DROP_WORD)
    
     
-    def select(self, enonce):
-        self.cur.execute(enonce)
-        rangees = cur.fetchall()
-        #print(rangees)
-        for rangee in rangees:
-            print(rangee)      
+    # def select(self, enonce):
+    #     self.cur.execute(enonce)
+    #     rangees = cur.fetchall()
+    #     #print(rangees)
+    #     for rangee in rangees:
+    #         print(rangee)      
 
     # reçoit une liste de tuples [(id, mot), (id, mot), (nid, nmot)]  
     def insert_new_word(self, tuplesmot):        
@@ -72,9 +82,13 @@ class ConnexionDB():
 
     # reçoit une liste de tuples [(id1,id2, frequence), (id1,id2, frequence), (nid1,nid2, nfrequence)]  
     def insert_mat(self, matcooc):
-        self.cur.execute(DROP_MAT)
-        self.cur.execute(CREER_MAT)
+        
         self.cur.executemany(INSERT_MAT, matcooc)
+        self.connexion.commit()
+
+    def update_mat(self, matcooc):      
+        print(matcooc[0])  
+        self.cur.executemany(UPDATE_MAT, matcooc)
         self.connexion.commit()
 
     # retourne liste de tuple
@@ -88,17 +102,8 @@ class ConnexionDB():
         return motUnique
 
 
-    def get_cooc_mat(self, nbmotunique):
-        self.cur.execute('SELECT * FROM cooc_mat')    
-        matriceCo = np.zeros((nbmotunique, nbmotunique))
-        rangees =  self.cur.fetchall()
-        for rangee in rangees:
-           matriceCo[rangee[0]][rangee[1]] = rangee[2]           
-           
-    
-        return matriceCo
 
-    def get_cooc_mat2(self):
+    def get_cooc_mat(self):
         self.cur.execute('SELECT * FROM cooc_mat')    
         matriceCo = {}
         rangees =  self.cur.fetchall()
