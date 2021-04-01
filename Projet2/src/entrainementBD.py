@@ -8,13 +8,13 @@ from time import time
 """
      # Gestion des arguments (tailleFenetre,encodage, chemin)
      Affichage des erreurs si arguments invalide
-     
-     
+
+
      # Dans le init, se créer une instance d'Entraineur
-     
+
      # Logique d'entraineur :
-     - Créer liste des mots uniques 
-     - Créer liste des stop-word avec un count de la liste des mots les plus courants** 
+     - Créer liste des mots uniques
+     - Créer liste des stop-word avec un count de la liste des mots les plus courants**
      - Créer matrice selon taille de la taille du dictionnaire
      - Créer dictionnaire{Str:Mot, Int:Index}
     """
@@ -101,9 +101,7 @@ class Entraineur:
             if (key[0], key[1]) in dict_vieux:
                 valeur = dict_cooc[key[0], key[1]] + dict_vieux[key[0], key[1]]
                 listetuplesupdate.append((valeur, key[0], key[1]))
-            elif (key[1], key[0]) in dict_new:
-                pass
-            else:
+            elif (key[1], key[0]) not in dict_new:
                 listetuplesnew.append(
                     (key[0], key[1], dict_cooc[(key[0], key[1])]))
                 dict_new[(key[0], key[1])] = dict_cooc[(key[0], key[1])]
