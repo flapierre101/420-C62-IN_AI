@@ -103,7 +103,7 @@ class ConnexionDB():
 
 
 
-    def get_cooc_mat(self):
+    def get_cooc_dict(self):
         self.cur.execute('SELECT * FROM cooc_mat')    
         matriceCo = {}
         rangees =  self.cur.fetchall()
@@ -114,7 +114,7 @@ class ConnexionDB():
     
         return matriceCo
 
-    def get_cooc_mat_complete(self, nbmotunique):
+    def get_cooc_mat(self, nbmotunique):
         self.cur.execute('SELECT * FROM cooc_mat')    
         matriceCo = np.zeros((nbmotunique, nbmotunique))
         rangees =  self.cur.fetchall()
@@ -122,5 +122,5 @@ class ConnexionDB():
            matriceCo[rangee[0]][rangee[1]] = rangee[2]
            matriceCo[rangee[1]][rangee[0]] = rangee[2]
            
-        print(matriceCo)
+        
         return matriceCo

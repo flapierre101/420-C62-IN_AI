@@ -77,7 +77,7 @@ class Entraineur:
 
         dict_cooc  = {}
        
-        dict_vieux =  self.connexion.get_cooc_mat()
+        dict_vieux =  self.connexion.get_cooc_dict()
 
 
         for i in range(len(liste_mots)):

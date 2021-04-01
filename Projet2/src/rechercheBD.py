@@ -12,7 +12,7 @@ class Recherche:
         self.leMot = searchWord
         self.wordDict = self.connexion.get_words()
         self.stopWord = []
-        self.concMatrix = self.connexion.get_cooc_mat_complete(len(self.wordDict))
+        self.concMatrix = self.connexion.get_cooc_mat(len(self.wordDict))
         self.prelimResult = []
         self.method = self.predictMethod[method]
 
