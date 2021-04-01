@@ -120,16 +120,16 @@ class Entraineur:
         dict_new = {}
 
         for key in dict_cooc:
-            if (key[0], key[1]) in dict_vieux:
-                dict_update[key[0], key[1]] = dict_cooc[key[0], key[1]] + dict_vieux[key[0], key[1]]
-                listetuplesupdate.append((dict_cooc[(key[0], key[1])], key[0], key[1]))
+            if (key[0], key[1]) in dict_vieux:                
+                valeur = dict_cooc[key[0], key[1]] + dict_vieux[key[0], key[1]]
+                listetuplesupdate.append((valeur, key[0], key[1]))
             elif (key[1], key[0]) in dict_new:
                 pass
             else:
                 listetuplesnew.append((key[0], key[1], dict_cooc[(key[0], key[1])]))
                 dict_new[(key[0],key[1])] = dict_cooc[(key[0], key[1])]
         
-        print("longueur du dict", len(dict_vieux))
+        
         self.connexion.insert_mat(listetuplesnew)
         if len(dict_vieux) > 1:
             self.connexion.update_mat(listetuplesupdate)

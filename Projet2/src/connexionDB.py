@@ -108,7 +108,8 @@ class ConnexionDB():
         matriceCo = {}
         rangees =  self.cur.fetchall()
         for rangee in rangees:
-           matriceCo[(rangee[0],rangee[1])] = rangee[2]           
+           matriceCo[(rangee[0],rangee[1])] = rangee[2] 
+           matriceCo[(rangee[1],rangee[0])] = rangee[2]             
            
     
         return matriceCo
@@ -121,5 +122,5 @@ class ConnexionDB():
            matriceCo[rangee[0]][rangee[1]] = rangee[2]
            matriceCo[rangee[1]][rangee[0]] = rangee[2]
            
-    
+        print(matriceCo)
         return matriceCo
