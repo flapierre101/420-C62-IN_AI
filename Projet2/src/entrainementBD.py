@@ -77,14 +77,13 @@ class Entraineur:
 
         dict_cooc  = {}
 
-        dict_cooc_vieux =  self.connexion.get_cooc_mat2()
-        #self.matriceCo =  self.connexion.get_cooc_mat(len(motsUnique))
+        #dict_cooc_vieux =  self.connexion.get_cooc_mat2()
+        self.matriceCo =  self.connexion.get_cooc_mat(len(motsUnique))
 
         for i in range(len(liste_mots)):
             motCentral = motsUnique[liste_mots[i]]
             for j in range(1, moitieF + 1):
                 if not i + j >= len(liste_mots) and motCentral != motsUnique[liste_mots[i + j]]:
-                    """
                     self.matriceCo[motCentral][motsUnique[liste_mots[i + j]]] += 1
                     self.matriceCo[motsUnique[liste_mots[i + j]]][motCentral] += 1 # seulement besoin de stocker la moitié d'une matrice symétique!
                     """
@@ -98,6 +97,7 @@ class Entraineur:
                         dict_cooc[(indexcooc, motCentral)] = 1
                     else:
                         dict_cooc[(indexcooc, motCentral)] += 1
+                    """
                     #dict_cooc[(motCentral, motsUnique[liste_mots[i + j]])] = self.matriceCo[motCentral][motsUnique[liste_mots[i + j]]]
                     #dict_cooc[(motsUnique[liste_mots[i + j]], motCentral)] = self.matriceCo[motCentral][motsUnique[liste_mots[i + j]]]
 
@@ -106,16 +106,16 @@ class Entraineur:
 
         listetuples = []   
         
-        """        
         index =  np.transpose(np.nonzero(np.triu(self.matriceCo, 0)))   
       
         for k in range(len(index)):
             listetuples.append((int(index[k][0]), int(index[k][1]), self.matriceCo[index[k][0]][index[k][1]]))
 
+        """        
         listetuples = []        
-        """
         for key in dict_cooc:
             listetuples.append((key[0], key[1], dict_cooc[(key[0], key[1])]))
+        """
 
         #self.connexion.insert_mat(listetuples)
 
