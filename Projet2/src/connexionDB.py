@@ -98,6 +98,16 @@ class ConnexionDB():
     
         return matriceCo
 
+    def get_cooc_mat2(self):
+        self.cur.execute('SELECT * FROM cooc_mat')    
+        matriceCo = {}
+        rangees =  self.cur.fetchall()
+        for rangee in rangees:
+           matriceCo[(rangee[0],rangee[1])] = rangee[2]           
+           
+    
+        return matriceCo
+
     def get_cooc_mat_complete(self, nbmotunique):
         self.cur.execute('SELECT * FROM cooc_mat')    
         matriceCo = np.zeros((nbmotunique, nbmotunique))

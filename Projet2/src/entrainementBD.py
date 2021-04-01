@@ -25,10 +25,10 @@ class Entraineur:
     def __init__(self, tailleFenetre, encodage, path):
         self.fenetre = int(tailleFenetre)
         self.encodage = encodage
-        self.path = path
-        self.matriceCo = None
+        self.path = path        
         self.motsUnique = None
         self.connexion = ConnexionDB()
+        self.matriceCo = {}
         #self.connexion.drop_tables()
         self.connexion.creer_tables()
 
@@ -41,10 +41,8 @@ class Entraineur:
             print("\n*** Fichier non reconnu, veuillez entrez un chemin valide et reesayer ***")            
             return 1
 
-        self.motsUnique = self.__creerListeUnique(liste_mots)     
+        self.motsUnique = self.__creerListeUnique(liste_mots)   
         
-        self.matriceCo = self.connexion.get_cooc_mat(len(self.motsUnique))
-
         self.__parcourirMatrice(self.motsUnique, liste_mots)
 
         print(f'Temps de l\'entraîneur: {round((time() - trainerT), 2)} secondes')
@@ -79,12 +77,17 @@ class Entraineur:
 
         dict_cooc  = {}
 
+        dict_cooc_vieux =  self.connexion.get_cooc_mat2()
+        #self.matriceCo =  self.connexion.get_cooc_mat(len(motsUnique))
+
         for i in range(len(liste_mots)):
             motCentral = motsUnique[liste_mots[i]]
             for j in range(1, moitieF + 1):
                 if not i + j >= len(liste_mots) and motCentral != motsUnique[liste_mots[i + j]]:
-                    #self.matriceCo[motCentral][motsUnique[liste_mots[i + j]]] += 1
-                    #self.matriceCo[motsUnique[liste_mots[i + j]]][motCentral] += 1 # seulement besoin de stocker la moitié d'une matrice symétique!
+                    """
+                    self.matriceCo[motCentral][motsUnique[liste_mots[i + j]]] += 1
+                    self.matriceCo[motsUnique[liste_mots[i + j]]][motCentral] += 1 # seulement besoin de stocker la moitié d'une matrice symétique!
+                    """
                     indexcooc = motsUnique[liste_mots[i + j]]
                     if (motCentral, indexcooc) not in dict_cooc:
                         dict_cooc[(motCentral, indexcooc)] = 1
@@ -95,11 +98,11 @@ class Entraineur:
                         dict_cooc[(indexcooc, motCentral)] = 1
                     else:
                         dict_cooc[(indexcooc, motCentral)] += 1
-
                     #dict_cooc[(motCentral, motsUnique[liste_mots[i + j]])] = self.matriceCo[motCentral][motsUnique[liste_mots[i + j]]]
                     #dict_cooc[(motsUnique[liste_mots[i + j]], motCentral)] = self.matriceCo[motCentral][motsUnique[liste_mots[i + j]]]
 
 
+        # comparer dict_vieux avec nouveau dict :
 
         listetuples = []   
         
@@ -108,12 +111,13 @@ class Entraineur:
       
         for k in range(len(index)):
             listetuples.append((int(index[k][0]), int(index[k][1]), self.matriceCo[index[k][0]][index[k][1]]))
-        """
 
         listetuples = []        
+        """
         for key in dict_cooc:
             listetuples.append((key[0], key[1], dict_cooc[(key[0], key[1])]))
-        self.connexion.insert_mat(listetuples)
+
+        #self.connexion.insert_mat(listetuples)
 
 
 
