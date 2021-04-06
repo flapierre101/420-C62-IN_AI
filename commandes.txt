@@ -1,0 +1,9 @@
+
+				
+				
+
+main.py -e -t 5 --enc utf-8 --chemin ../textes/GerminalUTF8.txt
+main.py -e -t 5 --enc utf-8 --chemin ../textes/DonQuichotteUTF8.txt
+main.py -e -t 5 --enc utf-8 --chemin ../textes/LesTroisMousquetairesUTF8.txt
+
+main.py -r -t 5
