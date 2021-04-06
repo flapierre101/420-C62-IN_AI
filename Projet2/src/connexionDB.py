@@ -31,8 +31,17 @@ CREATE TABLE IF NOT EXISTS cooc_mat
 '''
 DROP_MAT = 'DROP TABLE IF EXISTS cooc_mat'
 INSERT_MAT = 'INSERT INTO cooc_mat VALUES(?, ?, ?)'
-DELETE_MAT = 'DELETE FROM cooc_mat WHERE frequence = 0'
 
+UPDATE_MAT = '''
+        UPDATE cooc_mat
+            SET 
+                frequence = ?
+            WHERE
+                mot1 = ? and
+                mot2 = ?
+'''
+
+DELETE_MAT = 'DELETE FROM cooc_mat WHERE frequence = 0'
 
 
 class ConnexionDB():
@@ -42,12 +51,11 @@ class ConnexionDB():
             self.cur = self.connexion.cursor()
             self.cur.execute(ACTIVER_FK)
         except:
-                print_exc()
+            print_exc()
 
     def deconnecter(self):
         self.cur.close()
         self.connexion.close()
-
 
     def creer_tables(self):
         self.cur.execute(CREER_WORD)
@@ -56,7 +64,6 @@ class ConnexionDB():
     def drop_tables(self):
         self.cur.execute(DROP_MAT)
         self.cur.execute(DROP_WORD)
-
 
     # def select(self, enonce):
     #     self.cur.execute(enonce)
@@ -72,39 +79,41 @@ class ConnexionDB():
 
     # reçoit une liste de tuples [(id1,id2, frequence), (id1,id2, frequence), (nid1,nid2, nfrequence)]
     def insert_mat(self, matcooc):
-        self.cur.execute(DROP_MAT)
-        self.cur.execute(CREER_MAT)
+
         self.cur.executemany(INSERT_MAT, matcooc)
+        self.connexion.commit()
+
+    def update_mat(self, matcooc):
+        print(matcooc[0])
+        self.cur.executemany(UPDATE_MAT, matcooc)
         self.connexion.commit()
 
     # retourne liste de tuple
     def get_words(self):
         motUnique = {}
         self.cur.execute('SELECT * FROM word_dict')
-        rangees =  self.cur.fetchall()
+        rangees = self.cur.fetchall()
         for rangee in rangees:
-           motUnique[rangee[1]] = rangee[0]
+            motUnique[rangee[1]] = rangee[0]
 
         return motUnique
 
+    def get_cooc_dict(self):
+        self.cur.execute('SELECT * FROM cooc_mat')
+        matriceCo = {}
+        rangees = self.cur.fetchall()
+        for rangee in rangees:
+            matriceCo[(rangee[0], rangee[1])] = rangee[2]
+            matriceCo[(rangee[1], rangee[0])] = rangee[2]
+
+        return matriceCo
 
     def get_cooc_mat(self, nbmotunique):
         self.cur.execute('SELECT * FROM cooc_mat')
         matriceCo = np.zeros((nbmotunique, nbmotunique))
-        rangees =  self.cur.fetchall()
+        rangees = self.cur.fetchall()
         for rangee in rangees:
-           matriceCo[rangee[0]][rangee[1]] = rangee[2]
-
-
-        return matriceCo
-
-    def get_cooc_mat_complete(self, nbmotunique):
-        self.cur.execute('SELECT * FROM cooc_mat')
-        matriceCo = np.zeros((nbmotunique, nbmotunique))
-        rangees =  self.cur.fetchall()
-        for rangee in rangees:
-           matriceCo[rangee[0]][rangee[1]] = rangee[2]
-           matriceCo[rangee[1]][rangee[0]] = rangee[2]
-
+            matriceCo[rangee[0]][rangee[1]] = rangee[2]
+            matriceCo[rangee[1]][rangee[0]] = rangee[2]
 
         return matriceCo

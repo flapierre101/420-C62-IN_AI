@@ -26,39 +26,35 @@ class Entraineur:
         self.fenetre = int(tailleFenetre)
         self.encodage = encodage
         self.path = path
-        self.matriceCo = None
         self.motsUnique = None
         self.connexion = ConnexionDB()
-        self.connexion.creer_tables()
 
+        # self.connexion.drop_tables()
+        self.connexion.creer_tables()
 
     def entrainement(self):
         trainerT = time()
         try:
-            liste_mots = re.findall('\w+', open(self.path, 'r', encoding=self.encodage).read())
+            liste_mots = re.findall(
+                '\w+', open(self.path, 'r', encoding=self.encodage).read())
             liste_mots = [x.lower() for x in liste_mots]
         except:
-            print("\n*** Fichier non reconnu, veuillez entrez un chemin valide et reesayer ***")
+            print(
+                "\n*** Fichier non reconnu, veuillez entrez un chemin valide et reesayer ***")
             return 1
 
         self.motsUnique = self.__creerListeUnique(liste_mots)
 
-        self.matriceCo = self.connexion.get_cooc_mat(len(self.motsUnique))
-
         self.__parcourirMatrice(self.motsUnique, liste_mots)
 
-        print(f'Temps de l\'entraîneur: {round((time() - trainerT), 2)} secondes')
-        self.connexion.cur.close()
-        self.connexion.connexion.close()
+        print(
+            f'Temps de l\'entraîneur: {round((time() - trainerT), 2)} secondes')
+
         return 0
-
-
-
 
     def __creerListeUnique(self, liste_mots):
 
         motUnique = self.connexion.get_words()
-
 
         listetuples = []
 
@@ -67,55 +63,49 @@ class Entraineur:
                 listetuples.append((len(motUnique), mot))
                 motUnique[mot] = len(motUnique)
 
-
         self.connexion.insert_new_word(listetuples)
 
         return motUnique
 
-
-
-
-    def __parcourirMatrice(self, motsUnique, liste_mots): # version en utilisant la symétrie, pas besoin de regarder l'index précédent. Gain de 0.05 secondes.
-        moitieF = self.fenetre // 2
-
-
-
-        for i in range(len(liste_mots)):
-            motCentral = motsUnique[liste_mots[i]]
-            for j in range(1, moitieF + 1):
-                if not i + j >= len(liste_mots) and motCentral != motsUnique[liste_mots[i + j]]:
-                    self.matriceCo[motCentral][motsUnique[liste_mots[i + j]]] += 1
-                    self.matriceCo[motsUnique[liste_mots[i + j]]][motCentral] += 1 # seulement besoin de stocker la moitié d'une matrice symétique!
-                    #dict_cooc[(motCentral, motsUnique[liste_mots[i + j]])] = self.matriceCo[motCentral][motsUnique[liste_mots[i + j]]]
-                    #dict_cooc[(motsUnique[liste_mots[i + j]], motCentral)] = self.matriceCo[motCentral][motsUnique[liste_mots[i + j]]]
-
-
-
-        listetuples = []
-
-        index =  np.transpose(np.nonzero(np.triu(self.matriceCo, 0)))
-
-        for k in range(len(index)):
-            listetuples.append((int(index[k][0]), int(index[k][1]), self.matriceCo[index[k][0]][index[k][1]]))
-
-        """
-        listetuples = []
-        for key in dict_cooc:
-            listetuples.append((key[0], key[1], dict_cooc[(key[0], key[1])]))
-        """
-        self.connexion.insert_mat(listetuples)
-
-
-
-
-""" Version 1 : Cherchant à l'avant et derrière dans l'index
+    # version en utilisant la symétrie, pas besoin de regarder l'index précédent. Gain de 0.05 secondes.
     def __parcourirMatrice(self, motsUnique, liste_mots):
         moitieF = self.fenetre // 2
+
+        dict_cooc = {}
+
+        dict_vieux = self.connexion.get_cooc_dict()
+
         for i in range(len(liste_mots)):
             motCentral = motsUnique[liste_mots[i]]
             for j in range(1, moitieF + 1):
-                if not i - j < 0 and motCentral != motsUnique[liste_mots[i - j]]:
-                    self.matriceCo[motCentral][motsUnique[liste_mots[i - j]]] += 1
                 if not i + j >= len(liste_mots) and motCentral != motsUnique[liste_mots[i + j]]:
-                    self.matriceCo[motCentral][motsUnique[liste_mots[i + j]]] += 1
-"""
+
+                    indexcooc = motsUnique[liste_mots[i + j]]
+                    if (motCentral, indexcooc) not in dict_cooc:
+                        dict_cooc[(motCentral, indexcooc)] = 1
+                    else:
+                        dict_cooc[(motCentral, indexcooc)] += 1
+
+                    if (indexcooc, motCentral) not in dict_cooc:
+                        dict_cooc[(indexcooc, motCentral)] = 1
+                    else:
+                        dict_cooc[(indexcooc, motCentral)] += 1
+
+    # comparer dict_vieux avec nouveau dict  (dict_cooc):
+        listetuplesupdate = []
+        listetuplesnew = []
+
+        dict_new = {}
+
+        for key in dict_cooc:
+            if (key[0], key[1]) in dict_vieux:
+                valeur = dict_cooc[key[0], key[1]] + dict_vieux[key[0], key[1]]
+                listetuplesupdate.append((valeur, key[0], key[1]))
+            elif (key[1], key[0]) not in dict_new:
+                listetuplesnew.append(
+                    (key[0], key[1], dict_cooc[(key[0], key[1])]))
+                dict_new[(key[0], key[1])] = dict_cooc[(key[0], key[1])]
+
+        self.connexion.insert_mat(listetuplesnew)
+        if len(dict_vieux) > 1:
+            self.connexion.update_mat(listetuplesupdate)
