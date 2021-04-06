@@ -53,7 +53,7 @@ def main():
             exit()
 
         trainer = Entraineur(fenetre, enc, chemin)
-        trainer.entrainement()
+        trainer.entrainement() #TODO si retourne 1 on exit le programme
 
     elif args.command == 'recherche':
         parser.add_argument('-t', dest='taille',
@@ -63,7 +63,7 @@ def main():
 
         try:
             fenetre = args.__getattribute__('taille')
-            
+
             rep = input(
                 "\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit sclaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
 
