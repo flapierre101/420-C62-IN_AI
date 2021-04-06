@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS cooc_mat
     mot1 INT NOT NULL,
     mot2 INT NOT NULL,
     frequence int NOT NULL,
+    fenetre int NOT NULL,
 
     PRIMARY KEY(mot1, mot2),
     FOREIGN KEY(mot1) REFERENCES word_dict(id),
@@ -30,7 +31,7 @@ CREATE TABLE IF NOT EXISTS cooc_mat
 )
 '''
 DROP_MAT = 'DROP TABLE IF EXISTS cooc_mat'
-INSERT_MAT = 'INSERT INTO cooc_mat VALUES(?, ?, ?)'
+INSERT_MAT = 'INSERT INTO cooc_mat VALUES(?, ?, ?, ?)'
 
 UPDATE_MAT = '''
         UPDATE cooc_mat
@@ -38,10 +39,13 @@ UPDATE_MAT = '''
                 frequence = ?
             WHERE
                 mot1 = ? and
-                mot2 = ?
+                mot2 = ? and
+                fenetre = ?
 '''
 
 DELETE_MAT = 'DELETE FROM cooc_mat WHERE frequence = 0'
+
+GET_MAT = 'SELECT * FROM cooc_mat WHERE fenetre = ?'
 
 
 class ConnexionDB():
@@ -69,12 +73,7 @@ class ConnexionDB():
             print("je suis ic")
 
 
-    # def select(self, enonce):
-    #     self.cur.execute(enonce)
-    #     rangees = cur.fetchall()
-    #     #print(rangees)
-    #     for rangee in rangees:
-    #         print(rangee)
+   
 
     # reçoit une liste de tuples [(id, mot), (id, mot), (nid, nmot)]
     def insert_new_word(self, tuplesmot):
@@ -112,12 +111,15 @@ class ConnexionDB():
 
         return matriceCo
 
-    def get_cooc_mat(self, nbmotunique):
-        self.cur.execute('SELECT * FROM cooc_mat')
+    def get_cooc_mat(self, nbmotunique, fenetre):
+        self.cur.execute(GET_MAT, (fenetre,))
         matriceCo = np.zeros((nbmotunique, nbmotunique))
         rangees = self.cur.fetchall()
-        for rangee in rangees:
-            matriceCo[rangee[0]][rangee[1]] = rangee[2]
-            matriceCo[rangee[1]][rangee[0]] = rangee[2]
+        if len(rangees) == 0:
+            matriceCo = "Invalide"
+        else:
+            for rangee in rangees:
+                matriceCo[rangee[0]][rangee[1]] = rangee[2]
+                matriceCo[rangee[1]][rangee[0]] = rangee[2]
 
         return matriceCo

@@ -5,31 +5,38 @@ from connexionDB import *
 
 class Recherche:
 
-    def __init__(self, searchWord, method):
+    def __init__(self, searchWord, method, fenetre):
         self.predictMethod = {0: self.__produitScalaire,
                               1: self.__leastSquares, 2: self.__cityBlock}
         self.methodInt = method
         self.connexion = ConnexionDB()
-        self.leMot = searchWord
+        self.leMot = searchWord 
         self.wordDict = self.connexion.get_words()
         self.stopWord = []
-        self.concMatrix = self.connexion.get_cooc_mat(len(self.wordDict))
+        self.concMatrix = self.connexion.get_cooc_mat(len(self.wordDict), int(fenetre))
         self.prelimResult = []
         self.method = self.predictMethod[method]
 
-    def operation(self):
-        self.__verif()
-        self.__getStopWord()
-        for mot, value in self.wordDict.items():
-            if mot != self.leMot and mot not in self.stopWord:
-                tempo = self.method(self.motArray, self.concMatrix[value])
-                self.prelimResult.append((mot, tempo))
-        # scalaire décroissant - reste croissant
-        if self.methodInt == 0:
-            # lambda x: x[1] :Trier selon l'index [1] du tuple, soit les scores.
-            return sorted(self.prelimResult, reverse=True, key=lambda x: x[1])
+    def operation(self):       
+        
+
+        if isinstance(self.concMatrix, str):
+            self.prelimResult.append("Invalide")
+            return self.prelimResult
         else:
-            return sorted(self.prelimResult,  key=lambda x: x[1])
+            self.__verif()
+            self.__getStopWord()
+            
+            for mot, value in self.wordDict.items():
+                if mot != self.leMot and mot not in self.stopWord:
+                    tempo = self.method(self.motArray, self.concMatrix[value])
+                    self.prelimResult.append((mot, tempo))
+            # scalaire décroissant - reste croissant
+            if self.methodInt == 0:
+                # lambda x: x[1] :Trier selon l'index [1] du tuple, soit les scores.
+                return sorted(self.prelimResult, reverse=True, key=lambda x: x[1])
+            else:
+                return sorted(self.prelimResult,  key=lambda x: x[1])
 
     def __getStopWord(self):
         self.stopWord = re.findall(

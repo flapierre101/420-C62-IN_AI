@@ -65,29 +65,35 @@ def main():
             fenetre = args.__getattribute__('taille')
             
             rep = input(
-                "\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit sclaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
+                "\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit scalaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
 
             while rep != 'q':
                 try:
                     leMot, nbSyn, methode = rep.split()
 
                     searchT = time()
-                    research = Recherche(leMot.lower(), int(methode))
-                    ShowResults(research.operation(), int(nbSyn))
-                    print(
-                        f'\nTemps de la recherche: {round((time() - searchT), 2)} secondes')
+                    research = Recherche(leMot.lower(), int(methode), fenetre)
+                    resultats = research.operation()
+                    if resultats[0] == "Invalide":
+                        print("\nLa taille de la fenêtre ne retourne aucun résultat \nVeuillez relancer le script")   
+                        rep = 'q'                     
+                    else:
+                        ShowResults(resultats, int(nbSyn))
+                        print(f'\nTemps de la recherche: {round((time() - searchT), 2)} secondes')
+                        
+                        rep = input("\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit scalaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
 
+          
                 except:
                     print_exc()
                     #print("\nVous navez pas entrez le nombre suffisents d'arguments, Veuillez reesayer")
 
-                rep = input(
-                    "\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit sclaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
-
             print("\nmerci")
             exit()
+        
         except argparse.ArgumentError or argparse.ArgumentTypeError:
             print("\nVeuillez entrer une taille de recherche valide (nombre)")
+        
 
     elif args.command == 'resetDB':
         unknown = argv[2:]

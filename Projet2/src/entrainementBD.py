@@ -100,10 +100,10 @@ class Entraineur:
         for key in dict_cooc:
             if (key[0], key[1]) in dict_vieux:
                 valeur = dict_cooc[key[0], key[1]] + dict_vieux[key[0], key[1]]
-                listetuplesupdate.append((valeur, key[0], key[1]))
+                listetuplesupdate.append(
+                    (valeur, key[0], key[1], self.fenetre))
             elif (key[1], key[0]) not in dict_new:
-                listetuplesnew.append(
-                    (key[0], key[1], dict_cooc[(key[0], key[1])]))
+                listetuplesnew.append((key[0], key[1], dict_cooc[(key[0], key[1])],  self.fenetre))
                 dict_new[(key[0], key[1])] = dict_cooc[(key[0], key[1])]
 
         self.connexion.insert_mat(listetuplesnew)
