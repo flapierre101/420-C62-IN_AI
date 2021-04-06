@@ -6,6 +6,7 @@ from entrainementBD import *
 from rechercheBD import *
 from time import time
 from traceback import print_exc
+from connexionDB import *
 
 """
  TODO Fichier connexion - avec fonctions d'accès, création de table - TRÈS similaire à l'exemple du prof
@@ -62,7 +63,7 @@ def main():
 
         try:
             fenetre = args.__getattribute__('taille')
-            print("Taille: ", fenetre)
+            
             rep = input(
                 "\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit sclaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
 
@@ -89,11 +90,13 @@ def main():
             print("\nVeuillez entrer une taille de recherche valide (nombre)")
 
     elif args.command == 'resetDB':
-
         unknown = argv[2:]
         # si autre arguments entrés, mis dans une liste
 
         if len(unknown) == 0:
+            db = ConnexionDB()
+            db.drop_tables()
+
             print("DB HAS BEEN RESET")
         else:
             print("\nInvalide - l'option '-b' ne prend aucun argument")

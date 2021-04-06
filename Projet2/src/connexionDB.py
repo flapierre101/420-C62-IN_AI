@@ -62,8 +62,12 @@ class ConnexionDB():
         self.cur.execute(CREER_MAT)
 
     def drop_tables(self):
-        self.cur.execute(DROP_MAT)
-        self.cur.execute(DROP_WORD)
+        try:
+            self.cur.execute(DROP_MAT)
+            self.cur.execute(DROP_WORD)
+        except:
+            print("je suis ic")
+
 
     # def select(self, enonce):
     #     self.cur.execute(enonce)
