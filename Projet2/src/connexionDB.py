@@ -47,6 +47,8 @@ DELETE_MAT = 'DELETE FROM cooc_mat WHERE frequence = 0'
 
 GET_MAT = 'SELECT * FROM cooc_mat WHERE fenetre = ?'
 
+VACUUM = 'VACUUM'
+
 
 class ConnexionDB():
     def __init__(self):
@@ -69,8 +71,10 @@ class ConnexionDB():
         try:
             self.cur.execute(DROP_MAT)
             self.cur.execute(DROP_WORD)
+            self.cur.execute(VACUUM)
         except:
-            print("je suis ic")
+            print_exc()
+
 
 
    
