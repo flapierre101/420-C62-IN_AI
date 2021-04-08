@@ -1,3 +1,4 @@
+import sys
 from sys import argv
 import argparse
 from entrainementBD import *
@@ -10,6 +11,8 @@ def main():
     fenetre = enc = chemin = None
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group()
+
+    # Groupe mutuellement exclusif afin d'assurer une seule option choisie parmi les trois
     group.add_argument('-e', dest='command',
                        action='store_const', const='entrainement')
     group.add_argument('-r', dest='command',
@@ -17,7 +20,12 @@ def main():
     group.add_argument('-b', dest='command',
                        action='store_const', const='resetDB')
 
+    # Reste des arguments seront validés séparément car dépend de l'option choisie
     args, option_args = parser.parse_known_args()
+
+    if len(sys.argv) == 1:
+        print("\nErreur - Veuillez entrer les arguments nécessaires au lancement du script")
+        exit()
 
     if args.command == 'entrainement':
         parser.add_argument('-t', dest='taille',
@@ -83,7 +91,8 @@ def main():
 
 
                 except:
-                    print("\nVous navez pas entrez le nombre suffisents d'arguments, Veuillez reesayer")
+                    print("\nInvalide - Veuillez entrer un mot, le nombre de synonymes voulu et une méthode de recherche")
+                    exit()
 
             print("\nMerci")
             exit()
