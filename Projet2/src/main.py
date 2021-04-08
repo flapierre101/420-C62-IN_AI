@@ -20,9 +20,10 @@ def main():
     group.add_argument('-b', dest='command',
                        action='store_const', const='resetDB')
 
-    # Reste des arguments seront validés séparément car dépend de l'option choisie
+    # Reste des arguments seront ajoutés et validés séparément car dépend de l'option choisie
     args, option_args = parser.parse_known_args()
 
+    # Si aucun argument donné au lancement du script
     if len(sys.argv) == 1:
         print("\nErreur - Veuillez entrer les arguments nécessaires au lancement du script")
         exit()
@@ -108,7 +109,6 @@ def main():
         if len(unknown) == 0:
             db = ConnexionDB()
             db.drop_tables()
-
             print("\nLa base de données a été réinitialisée")
         else:
             print("\nInvalide - l'option '-b' ne prend aucun argument")
