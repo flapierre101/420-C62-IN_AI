@@ -10,27 +10,26 @@ class Recherche:
                               1: self.__leastSquares, 2: self.__cityBlock}
         self.methodInt = method
         self.connexion = ConnexionDB()
-        self.leMot = searchWord 
+        self.leMot = searchWord
         self.wordDict = self.connexion.get_words()
         self.stopWord = []
         self.concMatrix = self.connexion.get_cooc_mat(len(self.wordDict), int(fenetre))
         self.prelimResult = []
         self.method = self.predictMethod[method]
 
-    def operation(self):       
-        
-
+    def operation(self):
         if isinstance(self.concMatrix, str):
             self.prelimResult.append("Invalide")
             return self.prelimResult
         else:
             self.__verif()
             self.__getStopWord()
-            
+
             for mot, value in self.wordDict.items():
                 if mot != self.leMot and mot not in self.stopWord:
                     tempo = self.method(self.motArray, self.concMatrix[value])
                     self.prelimResult.append((mot, tempo))
+                    
             # scalaire décroissant - reste croissant
             if self.methodInt == 0:
                 # lambda x: x[1] :Trier selon l'index [1] du tuple, soit les scores.
