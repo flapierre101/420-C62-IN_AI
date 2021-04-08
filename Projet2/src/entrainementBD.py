@@ -86,8 +86,8 @@ class Entraineur:
 
 
         # TODO ajouter la gestion de la taille de la fenêtr
-        dict_vieux = self.connexion.get_cooc_dict()  # Les coocurences déjà existantes
-        
+        dict_vieux = self.connexion.get_cooc_dict(self.fenetre)  # Les coocurences déjà existantes
+
         for key in dict_cooc:
             #Si mots existent, valeurs doit être modifiées
             if (key[0], key[1]) in dict_vieux:

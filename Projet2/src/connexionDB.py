@@ -114,8 +114,8 @@ class ConnexionDB():
 
         return motUnique
 
-    def get_cooc_dict(self):
-        self.cur.execute('SELECT * FROM cooc_mat')
+    def get_cooc_dict(self, fenetre):
+        self.cur.execute('SELECT * FROM cooc_mat WHERE fenetre = ?', (fenetre, ))
         dictCooc = {}
         rangees = self.cur.fetchall()
         for rangee in rangees:
