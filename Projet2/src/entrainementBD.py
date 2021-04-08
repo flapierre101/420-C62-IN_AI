@@ -1,7 +1,4 @@
 import re
-import numpy as np
-from traceback import print_exc
-
 from connexionDB import *
 from time import time
 
@@ -19,15 +16,16 @@ class Entraineur:
     def entrainement(self):
         trainerT = time()
         try:
+            # Vérification si le fichier avec la fenêtre de recherche à déjà été entré dans la BD
             check_file = self.connexion.get_file_db()
-            print(type(check_file), check_file)
             if check_file == 0 or self.path not in check_file.values() or self.fenetre not in check_file:
                 liste_mots = re.findall(
                     '\w+', open(self.path, 'r', encoding=self.encodage).read())
                 liste_mots = [x.lower() for x in liste_mots]
                 self.connexion.insert_new_file(self.path, self.fenetre)
             else:
-                print('''\n Le fichier est déjà dans la BD, veuillez entrez un nouveau fichier ou une autre taille de fenêtre''')
+                print(
+                    '''\n Le fichier est déjà dans la BD, veuillez entrez un nouveau fichier ou une autre taille de fenêtre''')
                 return 0
 
         except:
@@ -47,7 +45,6 @@ class Entraineur:
     def __creerListeUnique(self, liste_mots):
 
         motUnique = self.connexion.get_words()
-
         listetuples = []
 
         for mot in liste_mots:
@@ -83,10 +80,9 @@ class Entraineur:
                     else:
                         dict_cooc[(indexcooc, motCentral)] += 1
 
-    # comparer dict_vieux avec nouveau dict  (dict_cooc):
+        # comparer dict_vieux avec nouveau dict  (dict_cooc):
         listetuplesupdate = []
         listetuplesnew = []
-
         dict_new = {}
 
         for key in dict_cooc:
@@ -95,7 +91,8 @@ class Entraineur:
                 listetuplesupdate.append(
                     (valeur, key[0], key[1], self.fenetre))
             elif (key[1], key[0]) not in dict_new:
-                listetuplesnew.append((key[0], key[1], dict_cooc[(key[0], key[1])],  self.fenetre))
+                listetuplesnew.append(
+                    (key[0], key[1], dict_cooc[(key[0], key[1])],  self.fenetre))
                 dict_new[(key[0], key[1])] = dict_cooc[(key[0], key[1])]
 
         self.connexion.insert_mat(listetuplesnew)

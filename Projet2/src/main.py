@@ -1,23 +1,9 @@
-import sys
 from sys import argv
 import argparse
-import numpy as np
 from entrainementBD import *
 from rechercheBD import *
 from time import time
-from traceback import print_exc
 from connexionDB import *
-
-"""
- TODO Fichier connexion - avec fonctions d'accès, création de table - TRÈS similaire à l'exemple du prof
- TODO Gestion des arguments - https://docs.python.org/3/library/argparse.html
-            -e (entrainement) - t (taille) --enc (encodage) --chemin (path)
-            -r : rechercher des synonymes -t <taille> : taille de fenêtre. <taille> doit suivre -t, précédé d’un espace.
-            -b générer BD (delete DB)
-TODO Modifier entrainement pour entrainementBD
-TODO Modifier recherche pour rechercheBD
-
- """
 
 
 def main():
@@ -54,7 +40,6 @@ def main():
 
         trainer = Entraineur(fenetre, enc, chemin)
         reponse = trainer.entrainement()
-         #TODO si retourne 1 on exit le programme
         if reponse == 1:
             exit()
 
@@ -78,25 +63,24 @@ def main():
                     research = Recherche(leMot.lower(), int(methode), fenetre)
                     resultats = research.operation()
                     if resultats[0] == "Invalide":
-                        print("\nLa taille de la fenêtre ne retourne aucun résultat \nVeuillez relancer le script")   
-                        rep = 'q'                     
+                        print("\nLa taille de la fenêtre ne retourne aucun résultat \nVeuillez relancer le script")
+                        rep = 'q'
                     else:
                         ShowResults(resultats, int(nbSyn))
                         print(f'\nTemps de la recherche: {round((time() - searchT), 2)} secondes')
-                        
+
                         rep = input("\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit scalaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
 
-          
+
                 except:
-                    print_exc()
-                    #print("\nVous navez pas entrez le nombre suffisents d'arguments, Veuillez reesayer")
+                    print("\nVous navez pas entrez le nombre suffisents d'arguments, Veuillez reesayer")
 
             print("\nmerci")
             exit()
-        
+
         except argparse.ArgumentError or argparse.ArgumentTypeError:
             print("\nVeuillez entrer une taille de recherche valide (nombre)")
-        
+
 
     elif args.command == 'resetDB':
         unknown = argv[2:]
