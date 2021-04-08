@@ -53,7 +53,10 @@ def main():
             exit()
 
         trainer = Entraineur(fenetre, enc, chemin)
-        trainer.entrainement() #TODO si retourne 1 on exit le programme
+        reponse = trainer.entrainement()
+         #TODO si retourne 1 on exit le programme
+        if reponse == 1:
+            exit()
 
     elif args.command == 'recherche':
         parser.add_argument('-t', dest='taille',

@@ -37,18 +37,18 @@ class Entraineur:
         try:
             check_file = self.connexion.get_file_db()
             print(type(check_file), check_file)
-            if check_file == 0 or self.path not in check_file.values():
+            if check_file == 0 or self.path not in check_file.values() or self.fenetre not in check_file:
                 liste_mots = re.findall(
                     '\w+', open(self.path, 'r', encoding=self.encodage).read())
                 liste_mots = [x.lower() for x in liste_mots]
                 self.connexion.insert_new_file(self.path, self.fenetre)
             else:
-                print('fichier deja entree') #TODO un meilleur message pour user
+                print('''\n Le fichier est déjà dans la BD, veuillez entrez un nouveau fichier ou une autre taille de fenêtre''')
+                return 0
 
         except:
-            # print_exc()
             print(
-                "\n*** Fichier non reconnu ou fichier déjà dans la BD, veuillez entrez un chemin valide et reesayer ***")
+                "\n*** Fichier non reconnu, veuillez entrez un chemin valide et reesayer ***")
             return 1
 
         self.motsUnique = self.__creerListeUnique(liste_mots)
