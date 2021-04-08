@@ -5,20 +5,6 @@ from traceback import print_exc
 from connexionDB import *
 from time import time
 
-"""
-     # Gestion des arguments (tailleFenetre,encodage, chemin)
-     Affichage des erreurs si arguments invalide
-
-
-     # Dans le init, se créer une instance d'Entraineur
-
-     # Logique d'entraineur :
-     - Créer liste des mots uniques
-     - Créer liste des stop-word avec un count de la liste des mots les plus courants**
-     - Créer matrice selon taille de la taille du dictionnaire
-     - Créer dictionnaire{Str:Mot, Int:Index}
-    """
-
 
 class Entraineur:
 
@@ -28,8 +14,6 @@ class Entraineur:
         self.path = path
         self.motsUnique = None
         self.connexion = ConnexionDB()
-
-        # self.connexion.drop_tables()
         self.connexion.creer_tables()
 
     def entrainement(self):
@@ -48,7 +32,7 @@ class Entraineur:
 
         except:
             print(
-                "\n*** Fichier non reconnu, veuillez entrez un chemin valide et reesayer ***")
+                "\n*** Fichier non reconnu ou type d'encodage invalide, veuillez entrez un chemin valide ou changer le type d'encodage et reesayer ***")
             return 1
 
         self.motsUnique = self.__creerListeUnique(liste_mots)

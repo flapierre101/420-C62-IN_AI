@@ -61,6 +61,7 @@ CREATE_FILES_DB = '''
 DROP_FILES_DB = 'DROP TABLE IF EXISTS files_DB'
 INSERT_FILE_DB = 'INSERT INTO files_DB VALUES(?, ?)'
 
+
 class ConnexionDB():
     def __init__(self):
         try:
@@ -88,11 +89,8 @@ class ConnexionDB():
         except:
             print_exc()
 
-
-
-
-
     # reçoit une liste de tuples [(id, mot), (id, mot), (nid, nmot)]
+
     def insert_new_word(self, tuplesmot):
         self.cur.executemany(INSERT_WORD, tuplesmot)
         self.connexion.commit()
