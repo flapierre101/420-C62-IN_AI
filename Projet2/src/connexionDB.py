@@ -1,46 +1,44 @@
 import sqlite3
-from traceback import print_exc
 import numpy as np
 
-# TODO creer des index
-
+#==========================CONSTANTE REQUEST SQL================================
 CHEMINBD = 'synonyms_dict.db'
 ACTIVER_FK = 'PRAGMA foreign_keys = 1'
 
 CREER_WORD = '''
-CREATE TABLE IF NOT EXISTS word_dict
-(
-    id  INT PRIMARY KEY NOT NULL,
-    mot CHAR(24) NOT NULL
-)
+    CREATE TABLE IF NOT EXISTS word_dict
+    (
+        id  INT PRIMARY KEY NOT NULL,
+        mot CHAR(24) NOT NULL
+    )
 '''
 DROP_WORD = 'DROP TABLE IF EXISTS word_dict'
 INSERT_WORD = 'INSERT INTO word_dict VALUES(?, ?)'
 
 CREER_MAT = '''
-CREATE TABLE IF NOT EXISTS cooc_mat
-(
-    mot1 INT NOT NULL,
-    mot2 INT NOT NULL,
-    frequence int NOT NULL,
-    fenetre int NOT NULL,
+    CREATE TABLE IF NOT EXISTS cooc_mat
+    (
+        mot1 INT NOT NULL,
+        mot2 INT NOT NULL,
+        frequence int NOT NULL,
+        fenetre int NOT NULL,
 
-    PRIMARY KEY(mot1, mot2),
-    FOREIGN KEY(mot1) REFERENCES word_dict(id),
-    FOREIGN KEY(mot2) REFERENCES word_dict(id)
-)
+        PRIMARY KEY(mot1, mot2),
+        FOREIGN KEY(mot1) REFERENCES word_dict(id),
+        FOREIGN KEY(mot2) REFERENCES word_dict(id)
+    )
 '''
 DROP_MAT = 'DROP TABLE IF EXISTS cooc_mat'
 INSERT_MAT = 'INSERT INTO cooc_mat VALUES(?, ?, ?, ?)'
 
 UPDATE_MAT = '''
-        UPDATE cooc_mat
-            SET
-                frequence = ?
-            WHERE
-                mot1 = ? and
-                mot2 = ? and
-                fenetre = ?
+    UPDATE cooc_mat
+        SET
+            frequence = ?
+        WHERE
+            mot1 = ? and
+            mot2 = ? and
+            fenetre = ?
 '''
 
 DELETE_MAT = 'DELETE FROM cooc_mat WHERE frequence = 0'
@@ -61,6 +59,8 @@ CREATE_FILES_DB = '''
 DROP_FILES_DB = 'DROP TABLE IF EXISTS files_DB'
 INSERT_FILE_DB = 'INSERT INTO files_DB VALUES(?, ?)'
 
+#===============================================================================
+
 class ConnexionDB():
     def __init__(self):
         try:
@@ -68,7 +68,7 @@ class ConnexionDB():
             self.cur = self.connexion.cursor()
             self.cur.execute(ACTIVER_FK)
         except:
-            print_exc()
+            print("ERREUR LORS DE LA CONNECTION À LA BD!")
 
     def deconnecter(self):
         self.cur.close()
@@ -86,18 +86,15 @@ class ConnexionDB():
             self.cur.execute(DROP_FILES_DB)
             self.cur.execute(VACUUM)
         except:
-            print_exc()
-
-
-
-
+            print("Erreur lors de la supression de la base de données!")
 
     # reçoit une liste de tuples [(id, mot), (id, mot), (nid, nmot)]
     def insert_new_word(self, tuplesmot):
         self.cur.executemany(INSERT_WORD, tuplesmot)
         self.connexion.commit()
 
-    # reçoit une liste de tuples [(id1,id2, frequence), (id1,id2, frequence), (nid1,nid2, nfrequence)]
+    # reçoit une liste de tuples [(id1,id2, frequence), (id1,id2, frequence),
+	#                               (nid1,nid2, nfrequence)]
     def insert_mat(self, matcooc):
 
         self.cur.executemany(INSERT_MAT, matcooc)
@@ -155,5 +152,4 @@ class ConnexionDB():
                 file_dict[result[1]] = result[0]
             return file_dict
         except:
-            print_exc()
             return 0
