@@ -41,7 +41,12 @@ def main():
         parser.add_argument('--chemin', dest='chemin',
                             action='store', required=True)
 
-        parser.parse_args(option_args, namespace=args)
+        try:
+            parser.parse_args(option_args, namespace=args)
+        except:
+            print(
+                "\nNombre d'arguments insuffisant. Veuillez entrer une taille de fenêtre, l'encodage et le chemin du texte voulu")
+            exit()
 
         try:
             fenetre = args.__getattribute__('taille')
@@ -49,12 +54,12 @@ def main():
             chemin = args.__getattribute__('chemin')
         except argparse.ArgumentError or argparse.ArgumentTypeError:
             print(
-                "\nVeuillez entrer des arguments valides: taille de la fenêtre, encodage et chemin")
+                "\nVeuillez entrer des arguments valides: taille de la fenêtre (nombre entier), encodage (utf-8) et chemin")
             exit()
 
         trainer = Entraineur(fenetre, enc, chemin)
         reponse = trainer.entrainement()
-         #TODO si retourne 1 on exit le programme
+         #Si retourne 1 on exit le programme
         if reponse == 1:
             exit()
 
@@ -62,7 +67,12 @@ def main():
         parser.add_argument('-t', dest='taille',
                             action='store', type=int, required=True)
 
-        parser.parse_args(option_args, namespace=args)
+        try:
+            parser.parse_args(option_args, namespace=args)
+        except:
+            print(
+                "\nNombre d'arguments insuffisant. Veuillez entrer une taille de fenêtre, l'encodage et le chemin du texte voulu")
+            exit()
 
         try:
             fenetre = args.__getattribute__('taille')
@@ -91,7 +101,7 @@ def main():
                     print_exc()
                     #print("\nVous navez pas entrez le nombre suffisents d'arguments, Veuillez reesayer")
 
-            print("\nmerci")
+            print("\nMerci")
             exit()
         
         except argparse.ArgumentError or argparse.ArgumentTypeError:
@@ -106,7 +116,7 @@ def main():
             db = ConnexionDB()
             db.drop_tables()
 
-            print("DB HAS BEEN RESET")
+            print("\nLa base de données a été réinitialisée")
         else:
             print("\nInvalide - l'option '-b' ne prend aucun argument")
 
