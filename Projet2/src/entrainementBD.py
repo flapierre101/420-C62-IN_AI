@@ -30,7 +30,7 @@ class Entraineur:
 
         except:
             print(
-                "\n*** Fichier non reconnu, veuillez entrez un chemin valide et reesayer ***")
+                "\n*** Fichier non reconnu ou type d'encodage invalide, veuillez entrez un chemin valide ou changer le type d'encodage et reesayer ***")
             return 1
 
         self.motsUnique = self.__creerListeUnique(liste_mots)
