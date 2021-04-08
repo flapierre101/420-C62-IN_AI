@@ -1,3 +1,4 @@
+import sys
 from sys import argv
 import argparse
 from entrainementBD import *
@@ -10,6 +11,8 @@ def main():
     fenetre = enc = chemin = None
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group()
+
+    # Groupe mutuellement exclusif afin d'assurer une seule option choisie parmi les trois
     group.add_argument('-e', dest='command',
                        action='store_const', const='entrainement')
     group.add_argument('-r', dest='command',
@@ -17,7 +20,12 @@ def main():
     group.add_argument('-b', dest='command',
                        action='store_const', const='resetDB')
 
+    # Reste des arguments seront validés séparément car dépend de l'option choisie
     args, option_args = parser.parse_known_args()
+
+    if len(sys.argv) == 1:
+        print("\nErreur - Veuillez entrer les arguments nécessaires au lancement du script")
+        exit()
 
     if args.command == 'entrainement':
         parser.add_argument('-t', dest='taille',
@@ -27,7 +35,12 @@ def main():
         parser.add_argument('--chemin', dest='chemin',
                             action='store', required=True)
 
-        parser.parse_args(option_args, namespace=args)
+        try:
+            parser.parse_args(option_args, namespace=args)
+        except:
+            print(
+                "\nNombre d'arguments insuffisant. Veuillez entrer une taille de fenêtre, l'encodage et le chemin du texte voulu")
+            exit()
 
         try:
             fenetre = args.__getattribute__('taille')
@@ -35,7 +48,7 @@ def main():
             chemin = args.__getattribute__('chemin')
         except argparse.ArgumentError or argparse.ArgumentTypeError:
             print(
-                "\nVeuillez entrer des arguments valides: taille de la fenêtre, encodage et chemin")
+                "\nVeuillez entrer des arguments valides: taille de la fenêtre (nombre entier), encodage (utf-8) et chemin")
             exit()
 
         trainer = Entraineur(fenetre, enc, chemin)
@@ -47,7 +60,12 @@ def main():
         parser.add_argument('-t', dest='taille',
                             action='store', type=int, required=True)
 
-        parser.parse_args(option_args, namespace=args)
+        try:
+            parser.parse_args(option_args, namespace=args)
+        except:
+            print(
+                "\nNombre d'arguments insuffisant. Veuillez entrer une taille de fenêtre, l'encodage et le chemin du texte voulu")
+            exit()
 
         try:
             fenetre = args.__getattribute__('taille')
@@ -73,9 +91,10 @@ def main():
 
 
                 except:
-                    print("\nVous navez pas entrez le nombre suffisents d'arguments, Veuillez reesayer")
+                    print("\nInvalide - Veuillez entrer un mot, le nombre de synonymes voulu et une méthode de recherche")
+                    exit()
 
-            print("\nmerci")
+            print("\nMerci")
             exit()
 
         except argparse.ArgumentError or argparse.ArgumentTypeError:
@@ -90,7 +109,7 @@ def main():
             db = ConnexionDB()
             db.drop_tables()
 
-            print("DB HAS BEEN RESET")
+            print("\nLa base de données a été réinitialisée")
         else:
             print("\nInvalide - l'option '-b' ne prend aucun argument")
 
