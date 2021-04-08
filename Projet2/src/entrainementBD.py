@@ -35,7 +35,7 @@ class Entraineur:
 
         self.motsUnique = self.__creerListeUnique(liste_mots)
 
-        self.__parcourirMatrice(self.motsUnique, liste_mots)
+        self.__coocurences(self.motsUnique, liste_mots)
 
         print(
             f'Temps de l\'entraîneur: {round((time() - trainerT), 2)} secondes')
@@ -57,13 +57,13 @@ class Entraineur:
         return motUnique
 
     # version en utilisant la symétrie, pas besoin de regarder l'index précédent. Gain de 0.05 secondes.
-    def __parcourirMatrice(self, motsUnique, liste_mots):
+    def __coocurences(self, motsUnique, liste_mots):
         moitieF = self.fenetre // 2
 
         dict_cooc = {}
 
-        dict_vieux = self.connexion.get_cooc_dict()
-
+        # Ajoute les données dans un dictionnaire au lieu d'une matrice.
+        # La clé est un tuple des coordonnées d'une matrice
         for i in range(len(liste_mots)):
             motCentral = motsUnique[liste_mots[i]]
             for j in range(1, moitieF + 1):
@@ -80,20 +80,26 @@ class Entraineur:
                     else:
                         dict_cooc[(indexcooc, motCentral)] += 1
 
-        # comparer dict_vieux avec nouveau dict  (dict_cooc):
-        listetuplesupdate = []
-        listetuplesnew = []
-        dict_new = {}
+        listetuplesupdate = []  # données devant être modifiées
+        listetuplesnew = []  # données à  ajouter
+        dict_new = {}  # les nouveaux mots ajoutés
 
+
+        # TODO ajouter la gestion de la taille de la fenêtr
+        dict_vieux = self.connexion.get_cooc_dict()  # Les coocurences déjà existantes
+        
         for key in dict_cooc:
+            #Si mots existent, valeurs doit être modifiées
             if (key[0], key[1]) in dict_vieux:
                 valeur = dict_cooc[key[0], key[1]] + dict_vieux[key[0], key[1]]
                 listetuplesupdate.append(
                     (valeur, key[0], key[1], self.fenetre))
+            # Sinon doit être ajoutée comme une nouvelle valeur. 
             elif (key[1], key[0]) not in dict_new:
                 listetuplesnew.append(
                     (key[0], key[1], dict_cooc[(key[0], key[1])],  self.fenetre))
                 dict_new[(key[0], key[1])] = dict_cooc[(key[0], key[1])]
+            
 
         self.connexion.insert_mat(listetuplesnew)
         if len(dict_vieux) > 1:

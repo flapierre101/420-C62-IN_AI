@@ -23,7 +23,7 @@ CREER_MAT = '''
         frequence int NOT NULL,
         fenetre int NOT NULL,
 
-        PRIMARY KEY(mot1, mot2),
+        PRIMARY KEY(mot1, mot2, fenetre),
         FOREIGN KEY(mot1) REFERENCES word_dict(id),
         FOREIGN KEY(mot2) REFERENCES word_dict(id)
     )
@@ -101,7 +101,6 @@ class ConnexionDB():
         self.connexion.commit()
 
     def update_mat(self, matcooc):
-        print(matcooc[0])
         self.cur.executemany(UPDATE_MAT, matcooc)
         self.connexion.commit()
 
@@ -117,13 +116,13 @@ class ConnexionDB():
 
     def get_cooc_dict(self):
         self.cur.execute('SELECT * FROM cooc_mat')
-        matriceCo = {}
+        dictCooc = {}
         rangees = self.cur.fetchall()
         for rangee in rangees:
-            matriceCo[(rangee[0], rangee[1])] = rangee[2]
-            matriceCo[(rangee[1], rangee[0])] = rangee[2]
+            dictCooc[(rangee[0], rangee[1])] = rangee[2]
+            dictCooc[(rangee[1], rangee[0])] = rangee[2]
 
-        return matriceCo
+        return dictCooc
 
     def get_cooc_mat(self, nbmotunique, fenetre):
         self.cur.execute(GET_MAT, (fenetre,))
