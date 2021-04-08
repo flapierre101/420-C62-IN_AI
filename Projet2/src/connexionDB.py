@@ -35,7 +35,7 @@ INSERT_MAT = 'INSERT INTO cooc_mat VALUES(?, ?, ?, ?)'
 
 UPDATE_MAT = '''
         UPDATE cooc_mat
-            SET 
+            SET
                 frequence = ?
             WHERE
                 mot1 = ? and
@@ -49,6 +49,17 @@ GET_MAT = 'SELECT * FROM cooc_mat WHERE fenetre = ?'
 
 VACUUM = 'VACUUM'
 
+CREATE_FILES_DB = '''
+       CREATE TABLE IF NOT EXISTS files_DB
+        (
+            file_name   TEXT    NOT NULL,
+            fenetre     INT     NOT NULL,
+
+            PRIMARY KEY(file_name, fenetre)
+        )
+'''
+DROP_FILES_DB = 'DROP TABLE IF EXISTS files_DB'
+INSERT_FILE_DB = 'INSERT INTO files_DB VALUES(?, ?)'
 
 class ConnexionDB():
     def __init__(self):
@@ -66,18 +77,20 @@ class ConnexionDB():
     def creer_tables(self):
         self.cur.execute(CREER_WORD)
         self.cur.execute(CREER_MAT)
+        self.cur.execute(CREATE_FILES_DB)
 
     def drop_tables(self):
         try:
             self.cur.execute(DROP_MAT)
             self.cur.execute(DROP_WORD)
+            self.cur.execute(DROP_FILES_DB)
             self.cur.execute(VACUUM)
         except:
             print_exc()
 
 
 
-   
+
 
     # reçoit une liste de tuples [(id, mot), (id, mot), (nid, nmot)]
     def insert_new_word(self, tuplesmot):
@@ -127,3 +140,20 @@ class ConnexionDB():
                 matriceCo[rangee[1]][rangee[0]] = rangee[2]
 
         return matriceCo
+
+    def insert_new_file(self, filename, fenetre):
+        insert = (filename, fenetre)
+        self.cur.execute(INSERT_FILE_DB, insert)
+        self.connexion.commit()
+
+    def get_file_db(self):
+        try:
+            self.cur.execute('SELECT * FROM files_DB')
+            file_dict = {}
+            results = self.cur.fetchall()
+            for result in results:
+                file_dict[result[1]] = result[0]
+            return file_dict
+        except:
+            print_exc()
+            return 0
