@@ -1,7 +1,7 @@
 import sqlite3
 import numpy as np
 
-#==========================CONSTANTE REQUEST SQL================================
+# ==========================CONSTANTE REQUEST SQL================================
 CHEMINBD = 'synonyms_dict.db'
 ACTIVER_FK = 'PRAGMA foreign_keys = 1'
 
@@ -94,7 +94,7 @@ class ConnexionDB():
         self.connexion.commit()
 
     # reçoit une liste de tuples [(id1,id2, frequence), (id1,id2, frequence),
-	#                               (nid1,nid2, nfrequence)]
+        #                               (nid1,nid2, nfrequence)]
     def insert_mat(self, matcooc):
 
         self.cur.executemany(INSERT_MAT, matcooc)
@@ -116,7 +116,8 @@ class ConnexionDB():
 
     # retourne un dictionnaire symbolisant la matrice selon la taille de fenêtre voulue
     def get_cooc_dict(self, fenetre):
-        self.cur.execute('SELECT * FROM cooc_mat WHERE fenetre = ?', (fenetre, ))
+        self.cur.execute(
+            'SELECT * FROM cooc_mat WHERE fenetre = ?', (fenetre, ))
         dictCooc = {}
         rangees = self.cur.fetchall()
         for rangee in rangees:

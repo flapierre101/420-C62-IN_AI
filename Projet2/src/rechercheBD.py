@@ -13,7 +13,8 @@ class Recherche:
         self.leMot = searchWord
         self.wordDict = self.connexion.get_words()
         self.stopWord = []
-        self.concMatrix = self.connexion.get_cooc_mat(len(self.wordDict), int(fenetre))
+        self.concMatrix = self.connexion.get_cooc_mat(
+            len(self.wordDict), int(fenetre))
         self.prelimResult = []
         self.method = self.predictMethod[method]
 
@@ -29,7 +30,7 @@ class Recherche:
                 if mot != self.leMot and mot not in self.stopWord:
                     tempo = self.method(self.motArray, self.concMatrix[value])
                     self.prelimResult.append((mot, tempo))
-                    
+
             # scalaire décroissant - reste croissant
             if self.methodInt == 0:
                 # lambda x: x[1] :Trier selon l'index [1] du tuple, soit les scores.

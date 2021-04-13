@@ -83,17 +83,20 @@ def main():
                     research = Recherche(leMot.lower(), int(methode), fenetre)
                     resultats = research.operation()
                     if resultats[0] == "Invalide":
-                        print("\nLa taille de la fenêtre ne retourne aucun résultat \nVeuillez relancer le script")
+                        print(
+                            "\nLa taille de la fenêtre ne retourne aucun résultat \nVeuillez relancer le script")
                         rep = 'q'
                     else:
                         ShowResults(resultats, int(nbSyn))
-                        print(f'\nTemps de la recherche: {round((time() - searchT), 2)} secondes')
+                        print(
+                            f'\nTemps de la recherche: {round((time() - searchT), 2)} secondes')
 
-                        rep = input("\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit scalaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
-
+                        rep = input(
+                            "\nEntrez un mot, le nombre de synonymes que vous voulez et la méthode de calcul, i.e. produit scalaire:0 least-squares:1, city-block: 2) Choisir 'q' pour quitter\n\n")
 
                 except:
-                    print("\nInvalide - Veuillez entrer un mot, le nombre de synonymes voulu et une méthode de recherche")
+                    print(
+                        "\nInvalide - Veuillez entrer un mot, le nombre de synonymes voulu et une méthode de recherche")
                     exit()
 
             print("\nMerci")

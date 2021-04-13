@@ -56,7 +56,6 @@ class Entraineur:
 
         return motUnique
 
-    
     def __coocurences(self, motsUnique, liste_mots):
         moitieF = self.fenetre // 2
 
@@ -84,22 +83,20 @@ class Entraineur:
         listetuplesnew = []  # données à  ajouter
         dict_new = {}  # les nouveaux mots ajoutés
 
-
-       
-        dict_vieux = self.connexion.get_cooc_dict(self.fenetre)  # Les coocurences déjà existantes
+        dict_vieux = self.connexion.get_cooc_dict(
+            self.fenetre)  # Les coocurences déjà existantes
 
         for key in dict_cooc:
-            #Si mots existent, valeurs doit être modifiées
+            # Si mots existent, valeurs doit être modifiées
             if (key[0], key[1]) in dict_vieux:
                 valeur = dict_cooc[key[0], key[1]] + dict_vieux[key[0], key[1]]
                 listetuplesupdate.append(
                     (valeur, key[0], key[1], self.fenetre))
-            # Sinon doit être ajoutée comme une nouvelle valeur. 
+            # Sinon doit être ajoutée comme une nouvelle valeur.
             elif (key[1], key[0]) not in dict_new:
                 listetuplesnew.append(
                     (key[0], key[1], dict_cooc[(key[0], key[1])],  self.fenetre))
                 dict_new[(key[0], key[1])] = dict_cooc[(key[0], key[1])]
-            
 
         self.connexion.insert_mat(listetuplesnew)
         if len(dict_vieux) > 1:
