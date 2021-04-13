@@ -28,6 +28,7 @@ def main():
         print("\nErreur - Veuillez entrer les arguments nécessaires au lancement du script")
         exit()
 
+    # Si entraînement choisi, ajout des arguments spécifiques à l'entraînement
     if args.command == 'entrainement':
         parser.add_argument('-t', dest='taille',
                             action='store', type=int, required=True)
@@ -56,7 +57,7 @@ def main():
         reponse = trainer.entrainement()
         if reponse == 1:
             exit()
-
+    # Si recherche choisie, ajout des arguments spécifiques à la recherche
     elif args.command == 'recherche':
         parser.add_argument('-t', dest='taille',
                             action='store', type=int, required=True)
@@ -101,7 +102,7 @@ def main():
         except argparse.ArgumentError or argparse.ArgumentTypeError:
             print("\nVeuillez entrer une taille de recherche valide (nombre)")
 
-
+    # Si reset de DB choisie, vérification si seul argument
     elif args.command == 'resetDB':
         unknown = argv[2:]
         # si autre arguments entrés, mis dans une liste
