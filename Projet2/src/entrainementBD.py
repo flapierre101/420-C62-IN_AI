@@ -56,7 +56,7 @@ class Entraineur:
 
         return motUnique
 
-    # version en utilisant la symétrie, pas besoin de regarder l'index précédent. Gain de 0.05 secondes.
+    
     def __coocurences(self, motsUnique, liste_mots):
         moitieF = self.fenetre // 2
 
@@ -85,7 +85,7 @@ class Entraineur:
         dict_new = {}  # les nouveaux mots ajoutés
 
 
-        # TODO ajouter la gestion de la taille de la fenêtr
+       
         dict_vieux = self.connexion.get_cooc_dict(self.fenetre)  # Les coocurences déjà existantes
 
         for key in dict_cooc:

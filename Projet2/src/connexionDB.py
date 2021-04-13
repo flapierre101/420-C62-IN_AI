@@ -114,6 +114,7 @@ class ConnexionDB():
 
         return motUnique
 
+    # retourne un dictionnaire symbolisant la matrice selon la taille de fenêtre voulue
     def get_cooc_dict(self, fenetre):
         self.cur.execute('SELECT * FROM cooc_mat WHERE fenetre = ?', (fenetre, ))
         dictCooc = {}
@@ -124,6 +125,7 @@ class ConnexionDB():
 
         return dictCooc
 
+    # Pour la recherche, retourne la matrice de coocurence selon la taille de la fenêtre désirée.
     def get_cooc_mat(self, nbmotunique, fenetre):
         self.cur.execute(GET_MAT, (fenetre,))
         matriceCo = np.zeros((nbmotunique, nbmotunique))
@@ -142,6 +144,7 @@ class ConnexionDB():
         self.cur.execute(INSERT_FILE_DB, insert)
         self.connexion.commit()
 
+    # retourne la liste des fichiers déjà parcourus avec leurs fenêtres
     def get_file_db(self):
         try:
             self.cur.execute('SELECT * FROM files_DB')
