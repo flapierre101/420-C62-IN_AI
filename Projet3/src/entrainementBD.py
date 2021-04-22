@@ -45,8 +45,7 @@ class Entraineur:
 
         self.__coocurences(self.motsUnique, liste_mots)
 
-        print(
-            f'Temps de l\'entraîneur: {round((time() - trainerT), 2)} secondes')
+        print(f'Temps de l\'entraîneur: {round((time() - trainerT), 2)} secondes')
 
         return 0
 

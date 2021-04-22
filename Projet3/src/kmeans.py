@@ -44,7 +44,8 @@ class Kmeans:
         self.stable = False
 
     def initialize(self):
-        self.temps = time()
+        self.tempsGlobal = time()
+        self.tempsIteration = time()
         for i in range(0, self.nbCentroides):
             arr = np.array(random.choice(self.concMatrix))
             self.centroides.append(arr)
@@ -70,7 +71,7 @@ class Kmeans:
         print("\n")
         print("============================================================================")
         print(f'Itération {self.iteration}')
-        print(f'{self.nbChangements} changements de cluster en {round((time() - self.temps), 2)} secondes.\n')
+        print(f'{self.nbChangements} changements de cluster en {round((time() - self.tempsIteration), 2)} secondes.\n')
         for i in range(0, self.nbCentroides):
             print(f'Il y a {len(self.clusters[i])} points (mots) regroupés autour du centroïde no {i}')
         print("\n============================================================================")
@@ -81,6 +82,7 @@ class Kmeans:
             self.iterate()
             self.printIteration()
         self.afficherResultats()
+        print(f'Temps global: {round((time() - self.tempsGlobal), 2)} secondes')
         return 1
 
     def iterate(self):        
