@@ -78,7 +78,7 @@ class Kmeans:
 
     def start(self):
         while(not self.stable):
-            self.temps = time()
+            self.tempsIteration = time()
             self.iterate()
             self.printIteration()
         self.afficherResultats()
