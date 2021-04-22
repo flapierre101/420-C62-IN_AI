@@ -80,7 +80,7 @@ class Kmeans:
             self.temps = time()
             self.iterate()
             self.printIteration()
-        
+        self.afficherResultats()
         return 1
 
     def iterate(self):        
@@ -120,7 +120,8 @@ class Kmeans:
             self.stable = True
         #print("Fin calcul changement")
             
-            
+    def afficherResultats(self):
+        pass            
 
     def checkConvergence(self):
         egal = True
