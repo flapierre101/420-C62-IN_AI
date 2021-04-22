@@ -3,6 +3,7 @@ from sys import argv
 import argparse
 from entrainementBD import *
 from rechercheBD import *
+from kmeans import *
 from time import time
 from connexionDB import *
 
@@ -19,6 +20,8 @@ def main():
                        action='store_const', const='recherche')
     group.add_argument('-b', dest='command',
                        action='store_const', const='resetDB')
+    group.add_argument('-c', dest='command',
+                       action='store_const', const='clustering')
 
     # Reste des arguments seront ajoutés et validés séparément car dépend de l'option choisie
     args, option_args = parser.parse_known_args()
@@ -104,6 +107,37 @@ def main():
 
         except argparse.ArgumentError or argparse.ArgumentTypeError:
             print("\nVeuillez entrer une taille de recherche valide (nombre)")
+
+    # Pour le clustering
+    elif args.command == 'clustering':
+        parser.add_argument('-t', dest='taille',
+                            action='store', type=int, required=True)
+        parser.add_argument('-n', dest='nombreMots',
+                            action='store', required=True)
+        parser.add_argument('-k', dest='nombreCentroides',
+                            action='store', required=True)
+
+        try:
+            parser.parse_args(option_args, namespace=args)
+        except:
+            print(
+                "\nNombre d'arguments insuffisant. Veuillez entrer une taille de fenêtre, l'encodage et le chemin du texte voulu")
+            exit()
+
+        try:
+            fenetre = args.__getattribute__('taille')
+            nbMots = args.__getattribute__('nombreMots')
+            nbCentroides = args.__getattribute__('nombreCentroides')
+        except argparse.ArgumentError or argparse.ArgumentTypeError:
+            print(
+                "\nVeuillez entrer des arguments valides: taille de la fenêtre (nombre entier), encodage (utf-8) et chemin")
+            exit()
+
+        kmeans = Kmeans(fenetre, nbMots, nbCentroides)
+        kmeans.initialize()
+        reponse = kmeans.start()
+        if reponse == 1:
+            exit()
 
     # Si reset de DB choisie, vérification si seul argument
     elif args.command == 'resetDB':
