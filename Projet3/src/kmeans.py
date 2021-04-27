@@ -45,8 +45,8 @@ class Kmeans:
 
     def initialize(self):
         self.tempsGlobal = time()
-        self.tempsIteration = time()
-        for i in range(0, self.nbCentroides):
+        self.tempsIteration = time()        
+        for i in range(0, self.nbCentroides):            
             arr = np.array(random.choice(self.concMatrix))
             self.centroides.append(arr)
             self.clusters.append([])
@@ -67,22 +67,22 @@ class Kmeans:
        
 
     
-    def printIteration(self):
-        print("\n")
-        print("============================================================================")
+    def printIteration(self):      
+        print("\n============================================================================")
         print(f'Itération {self.iteration}')
         print(f'{self.nbChangements} changements de cluster en {round((time() - self.tempsIteration), 2)} secondes.\n')
         for i in range(0, self.nbCentroides):
             print(f'Il y a {len(self.clusters[i])} points (mots) regroupés autour du centroïde no {i}')
-        print("\n============================================================================")
+        
 
     def start(self):
+        
         while(not self.stable):
             self.tempsIteration = time()
             self.iterate()
             self.printIteration()
         self.afficherResultats()
-        print(f'Temps global: {round((time() - self.tempsGlobal), 2)} secondes')
+        
         return 1
 
     def iterate(self):        
@@ -104,14 +104,17 @@ class Kmeans:
 
         
         #print("Début calcul scores de chaque mot")
-        for mot, value in self.motsUnique.items():
+        for value in self.motsUnique.values():
             resultatsTemp = []       
             for i in range(0, self.nbCentroides):                         
                 resultatsTemp.append(self.__leastSquares(self.newCentroides[i], self.concMatrix[value])) 
 
+            # minElement = le plus petit score, soit le meilleur pour least-square
             minElement = np.amin(resultatsTemp)
-            result = np.where(resultatsTemp == np.amin(resultatsTemp))                 
+            # result = l'index du cluster ou insérer le mot
+            result = np.where(resultatsTemp == minElement)                 
             self.newClusters[result[0][0]].append(self.concMatrix[value])
+
 
         #print("Fin calcul scores de chaque mot")
         self.iteration += 1
@@ -123,16 +126,39 @@ class Kmeans:
         #print("Fin calcul changement")
             
     def afficherResultats(self):
-        pass            
+        
 
-    def checkConvergence(self):
-        egal = True
+
+        self.clustersData = []
+
         for i in range(0, self.nbCentroides):
-            if not np.array_equal(self.newCentroides[i], self.centroides[i]):
-                egal = False
+            self.clustersData.append([])
+            
 
-        if egal:
-            self.stable = True
+        for mot, value in self.motsUnique.items():
+            resultatsTemp = []       
+            for i in range(self.nbCentroides):                         
+                resultatsTemp.append(self.__leastSquares(self.centroides[i], self.concMatrix[value])) 
+            
+            # minElement = le plus petit score, soit le meilleur pour least-square
+            minElement = np.amin(resultatsTemp)
+            # result = l'index du cluster ou insérer le mot
+            result = np.where(resultatsTemp == minElement)      
+            indexCluster = result[0][0]           
+            self.clustersData[indexCluster].append((mot, minElement))
+
+
+
+
+        for i in range(len(self.clustersData)):
+            print("\n****************************************************************************\n")
+            print("Groupe ", i, "\n")
+            self.clustersData[i] = sorted(self.clustersData[i],  key=lambda x: x[1])
+            for j in range(self.nbMots):
+                print(f"{self.clustersData[i][j][0]} --> {str(self.clustersData[i][j][1])}")
+        print(f'\n\nClustering en {self.iteration} itérations. Temps écoulés : {round((time() - self.tempsGlobal), 2)} secondes')
+ 
+
 
     def calculateChange(self):
         for i in range(0, self.nbCentroides):
