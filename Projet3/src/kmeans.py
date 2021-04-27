@@ -89,22 +89,22 @@ class Kmeans:
     def iterate(self):        
         #print("Début de l'itération")
         self.newClusters = []
-        self.nbChangements = 0
-        self.centroides = []
+        self.nbChangements = 0        
+        newCentroides = []
         self.clustersData = []
         #print("Début de la création des nouveaux centroides")
         for cluster in self.clusters:
             cluster = np.array(cluster)
             self.newClusters.append([])
             self.clustersData.append([])
-            self.centroides.append(np.average(cluster, axis=0))
+            newCentroides.append(np.average(cluster, axis=0))
         #print("Fin de la création des nouveaux centroides")
         
         #print("Début calcul scores de chaque mot")
         for mot, value in self.motsUnique.items():
             resultatsTemp = []       
             for i in range(0, self.nbCentroides):                         
-                resultatsTemp.append(self.__leastSquares(self.centroides[i], self.concMatrix[value])) 
+                resultatsTemp.append(self.__leastSquares(newCentroides[i], self.concMatrix[value])) 
 
             # minElement = le plus petit score, soit le meilleur pour least-square
             minElement = np.amin(resultatsTemp)
@@ -118,7 +118,8 @@ class Kmeans:
         #print("Fin calcul scores de chaque mot")
         self.iteration += 1
         #print("Début calcul changement")
-        self.calculateChange()
+        self.calculateChange(newCentroides)
+
 
         if self.nbChangements == 0:
             self.stable = True
@@ -139,10 +140,12 @@ class Kmeans:
  
 
 
-    def calculateChange(self):
+    def calculateChange(self, newCentroides):
         for i in range(0, self.nbCentroides):
             self.nbChangements += np.absolute(len(self.newClusters[i]) - len(self.clusters[i]))
             self.clusters[i] = self.newClusters[i]
+            if len(self.clusters[i]) > 0:
+                self.centroides[i] = newCentroides[i]
 
         self.nbChangements /= 2 
 
