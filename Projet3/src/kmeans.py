@@ -5,13 +5,13 @@
 •	-k <nombre> : nombre de centroïdes, une valeur entière. Avec cette option, vous devez choisir <nombre> vecteur(s) de votre matrice aléatoirement. Ces vecteurs sont les coordonnées initiales des centroïdes.
 
 
-Init : 
+Init :
 1)Chaque cluster est un vecteur de mot prit au hasard dans le dictionnaire - on sors le vecteur de ce mot dans la matrice reconstituée
 
 ======
 2)Ensuite  CHAQUE mot se compare à l'un des cluster choisi (avec least-square) et s'ajoute dans "l'équipe" du cluster avec le meilleur mot.
 
-3)On prend une "capture d'écran" des équipes. 
+3)On prend une "capture d'écran" des équipes.
 
 4)On calcule la moyenne "np.average(data, axis=0)" des vecteurs à 24000 dimensions de chacune des équipes pour déterminer le nouveau centroide.
 ======
@@ -35,13 +35,14 @@ class Kmeans:
         self.connexion = ConnexionDB()
         self.motsUnique = self.connexion.get_words()
         self.concMatrix = self.connexion.get_cooc_mat(len(self.motsUnique), int(tailleFenetre))
-        self.clusters = []  
-        self.centroides = []    
+        self.clusters = []
+        self.centroides = []
         self.iteration = 0
         self.nbChangements = 0
         self.nbMots = int(nbMots)
         self.nbCentroides = int(nbCentroides)
         self.stable = False
+        self.resultprelim = []
 
     def initialize(self):
         self.tempsGlobal = time()
@@ -50,23 +51,23 @@ class Kmeans:
             arr = np.array(random.choice(self.concMatrix))
             self.centroides.append(arr)
             self.clusters.append([])
-            
-            
+
+
         for mot, value in self.motsUnique.items():
-            resultatsTemp = []       
-            for i in range(0, self.nbCentroides):                         
-                resultatsTemp.append(self.__leastSquares(self.centroides[i], self.concMatrix[value])) 
+            resultatsTemp = []
+            for i in range(0, self.nbCentroides):
+                resultatsTemp.append(self.__leastSquares(self.centroides[i], self.concMatrix[value]))
 
             minElement = np.amin(resultatsTemp)
-            result = np.where(resultatsTemp == np.amin(resultatsTemp))                 
+            result = np.where(resultatsTemp == np.amin(resultatsTemp))
             self.clusters[result[0][0]].append(self.concMatrix[value])
 
         self.nbChangements = len(self.motsUnique)
         self.printIteration()
-        
-       
 
-    
+
+
+
     def printIteration(self):
         print("\n")
         print("============================================================================")
@@ -85,7 +86,7 @@ class Kmeans:
         print(f'Temps global: {round((time() - self.tempsGlobal), 2)} secondes')
         return 1
 
-    def iterate(self):        
+    def iterate(self):
         #print("Début de l'itération")
         self.newClusters = []
         self.nbChangements = 0
@@ -100,18 +101,19 @@ class Kmeans:
         #print("Début de checkConvergence")
         #self.checkConvergence()
         #print("Fin de checkConvergence")
-        
 
-        
+
+
         #print("Début calcul scores de chaque mot")
         for mot, value in self.motsUnique.items():
-            resultatsTemp = []       
-            for i in range(0, self.nbCentroides):                         
-                resultatsTemp.append(self.__leastSquares(self.newCentroides[i], self.concMatrix[value])) 
+            resultatsTemp = []
+            for i in range(0, self.nbCentroides):
+                resultatsTemp.append(self.__leastSquares(self.newCentroides[i], self.concMatrix[value]))
 
             minElement = np.amin(resultatsTemp)
-            result = np.where(resultatsTemp == np.amin(resultatsTemp))                 
+            result = np.where(resultatsTemp == np.amin(resultatsTemp))
             self.newClusters[result[0][0]].append(self.concMatrix[value])
+            self.resultprelim.append((mot, minElement))
 
         #print("Fin calcul scores de chaque mot")
         self.iteration += 1
@@ -121,9 +123,12 @@ class Kmeans:
         if self.nbChangements == 0:
             self.stable = True
         #print("Fin calcul changement")
-            
+
     def afficherResultats(self):
-        pass            
+        for i in range (len(self.resultprelim)):
+            if i < 11:
+                print("RESULTS:", self.resultprelim[i])
+
 
     def checkConvergence(self):
         egal = True
@@ -139,7 +144,7 @@ class Kmeans:
             self.nbChangements += np.absolute(len(self.newClusters[i]) - len(self.clusters[i]))
             self.clusters[i] = self.newClusters[i]
 
-        self.nbChangements /= 2 
+        self.nbChangements /= 2
 
     def __leastSquares(self, motA, motB):  # motA & motB = type np.array(1,y)
         return np.sum(np.square(motA - motB))
