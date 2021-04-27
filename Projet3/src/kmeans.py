@@ -133,7 +133,8 @@ class Kmeans:
             print("Groupe ", i, "\n")
             self.clustersData[i] = sorted(self.clustersData[i],  key=lambda x: x[1])
             for j in range(self.nbMots):
-                print(f"{self.clustersData[i][j][0]} --> {str(self.clustersData[i][j][1])}")
+                if j < len(self.clustersData[i]):
+                    print(f"{self.clustersData[i][j][0]} --> {str(self.clustersData[i][j][1])}")
         print(f'\n\nClustering en {self.iteration} itérations. Temps écoulés : {round((time() - self.tempsGlobal), 2)} secondes')
  
 
