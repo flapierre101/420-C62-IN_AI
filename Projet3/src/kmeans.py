@@ -37,6 +37,7 @@ class Kmeans:
         self.concMatrix = self.connexion.get_cooc_mat(len(self.motsUnique), int(tailleFenetre))
         self.clusters = []  
         self.centroides = []    
+        self.clustersData = []
         self.iteration = 0
         self.nbChangements = 0
         self.nbMots = int(nbMots)
@@ -89,31 +90,29 @@ class Kmeans:
         #print("Début de l'itération")
         self.newClusters = []
         self.nbChangements = 0
-        self.newCentroides = []
+        self.centroides = []
+        self.clustersData = []
         #print("Début de la création des nouveaux centroides")
         for cluster in self.clusters:
             cluster = np.array(cluster)
             self.newClusters.append([])
-            self.newCentroides.append(np.average(cluster, axis=0))
+            self.clustersData.append([])
+            self.centroides.append(np.average(cluster, axis=0))
         #print("Fin de la création des nouveaux centroides")
-
-        #print("Début de checkConvergence")
-        #self.checkConvergence()
-        #print("Fin de checkConvergence")
-        
-
         
         #print("Début calcul scores de chaque mot")
-        for value in self.motsUnique.values():
+        for mot, value in self.motsUnique.items():
             resultatsTemp = []       
             for i in range(0, self.nbCentroides):                         
-                resultatsTemp.append(self.__leastSquares(self.newCentroides[i], self.concMatrix[value])) 
+                resultatsTemp.append(self.__leastSquares(self.centroides[i], self.concMatrix[value])) 
 
             # minElement = le plus petit score, soit le meilleur pour least-square
             minElement = np.amin(resultatsTemp)
             # result = l'index du cluster ou insérer le mot
-            result = np.where(resultatsTemp == minElement)                 
-            self.newClusters[result[0][0]].append(self.concMatrix[value])
+            result = np.where(resultatsTemp == minElement)   
+            indexCluster = result[0][0]          
+            self.newClusters[indexCluster].append(self.concMatrix[value])
+            self.clustersData[indexCluster].append((mot, minElement))
 
 
         #print("Fin calcul scores de chaque mot")
@@ -125,28 +124,7 @@ class Kmeans:
             self.stable = True
         #print("Fin calcul changement")
             
-    def afficherResultats(self):
-        
-
-
-        self.clustersData = []
-
-        for i in range(0, self.nbCentroides):
-            self.clustersData.append([])
-            
-
-        for mot, value in self.motsUnique.items():
-            resultatsTemp = []       
-            for i in range(self.nbCentroides):                         
-                resultatsTemp.append(self.__leastSquares(self.centroides[i], self.concMatrix[value])) 
-            
-            # minElement = le plus petit score, soit le meilleur pour least-square
-            minElement = np.amin(resultatsTemp)
-            # result = l'index du cluster ou insérer le mot
-            result = np.where(resultatsTemp == minElement)      
-            indexCluster = result[0][0]           
-            self.clustersData[indexCluster].append((mot, minElement))
-
+    def afficherResultats(self):      
 
 
 
