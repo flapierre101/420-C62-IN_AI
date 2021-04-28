@@ -47,9 +47,11 @@ class Kmeans:
     def initialize(self):
         self.tempsGlobal = time()
         self.tempsIteration = time()        
-        for i in range(0, self.nbCentroides):            
-            arr = np.array(random.choice(self.concMatrix))
-            self.centroides.append(arr)
+
+        indexCentroides = random.sample(range(0, len(self.motsUnique)), self.nbCentroides)
+        
+        for i in range(0, self.nbCentroides):          
+            self.centroides.append(self.concMatrix[indexCentroides[i]])
             self.clusters.append([])
             
             
