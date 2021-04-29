@@ -35,7 +35,7 @@ class Kmeans:
         self.connexion = ConnexionDB()
         self.motsUnique = self.connexion.get_words()
         self.concMatrix = self.connexion.get_cooc_mat(len(self.motsUnique), int(tailleFenetre))
-        self.clusters = []  
+  
         self.centroides = []    
         self.clustersData = []
         self.iteration = 0
@@ -47,18 +47,17 @@ class Kmeans:
     def initialize(self):
         self.tempsGlobal = time()
         self.tempsIteration = time()    
-        self.oldClusterDictArray = []    
+        self.clusterDictArray = []    
         self.clustersData = []
         indexCentroides = random.sample(range(0, len(self.motsUnique)), self.nbCentroides)
         
         for i in range(0, self.nbCentroides):          
             self.centroides.append(self.concMatrix[indexCentroides[i]])
-            self.clusters.append([])
-            self.oldClusterDictArray.append({})
+            self.clusterDictArray.append({})
             self.clustersData.append([])       
     
         # Met chaque mot dans un cluster
-        self.attribuerCluster(self.centroides, self.clusters, self.oldClusterDictArray)   
+        self.attribuerCluster(self.centroides, self.clusterDictArray)   
 
         self.nbChangements = len(self.motsUnique)
 
@@ -71,7 +70,7 @@ class Kmeans:
         print(f'Itération {self.iteration}')
         print(f'{self.nbChangements} changements de cluster en {round((time() - self.tempsIteration), 2)} secondes.\n')
         for i in range(0, self.nbCentroides):
-            print(f'Il y a {len(self.clusters[i])} points (mots) regroupés autour du centroïde no {i}')
+            print(f'Il y a {len(self.clusterDictArray[i])} points (mots) regroupés autour du centroïde no {i}')
         
 
     def start(self):        
@@ -84,21 +83,18 @@ class Kmeans:
         return 1
 
     def iterate(self):        
-        self.nbChangements = 0        
-
-        self.newClusters = []
+        self.nbChangements = 0       
         newCentroides = []
         self.clustersData = []
         self.newClusterDictArray = []
                
-        for cluster in self.clusters:
-            cluster = np.array(cluster)
-            self.newClusters.append([])
+        for cluster in self.clusterDictArray:
+            clusterNP = np.array(list(cluster.values()))          
             self.clustersData.append([])
             self.newClusterDictArray.append({})
-            newCentroides.append(np.average(cluster, axis=0))        
+            newCentroides.append(np.average(clusterNP, axis=0))        
        
-        self.attribuerCluster(newCentroides, self.newClusters, self.newClusterDictArray)
+        self.attribuerCluster(newCentroides, self.newClusterDictArray)
 
         self.iteration += 1
 
@@ -106,7 +102,7 @@ class Kmeans:
 
         #print("Fin calcul changement")
     
-    def attribuerCluster(self, centroides, cluster, clusterDict):
+    def attribuerCluster(self, centroides, clusterDict):
         for mot, value in self.motsUnique.items():
             resultatsTemp = []       
             for i in range(0, self.nbCentroides):                         
@@ -116,10 +112,9 @@ class Kmeans:
             minElement = np.amin(resultatsTemp)
             # result[0][0] = l'index du cluster ou insérer le mot
             result = np.where(resultatsTemp == minElement)   
-            indexCluster = result[0][0]          
-            cluster[indexCluster].append(self.concMatrix[value])
+            indexCluster = result[0][0]        
             self.clustersData[indexCluster].append((mot, minElement))
-            clusterDict[indexCluster][value] = True
+            clusterDict[indexCluster][value] = self.concMatrix[value]
             
     def afficherResultats(self):    
         for i in range(len(self.clustersData)):
@@ -136,12 +131,11 @@ class Kmeans:
     def calculateChange(self, newCentroides):
         self.nbChangements = 0
 
-        for i in range(self.nbCentroides):
-            if self.oldClusterDictArray[i] != self.newClusterDictArray[i]:   
-                self.nbChangements += self.dict_compare(self.oldClusterDictArray[i], self.newClusterDictArray[i])
-            self.oldClusterDictArray[i] = self.newClusterDictArray[i]
-            self.clusters[i] = self.newClusters[i]
-            if len(self.clusters[i]) > 0:
+        for i in range(self.nbCentroides):            
+            if self.clusterDictArray[i].keys() != self.newClusterDictArray[i].keys():   
+                self.nbChangements += self.dict_compare(self.clusterDictArray[i], self.newClusterDictArray[i])
+            self.clusterDictArray[i] = self.newClusterDictArray[i]
+            if len(self.clusterDictArray[i]) > 0:
                 self.centroides[i] = newCentroides[i]        
         
         if self.nbChangements == 0:
