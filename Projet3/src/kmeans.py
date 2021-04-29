@@ -89,10 +89,10 @@ class Kmeans:
         self.newClusters = []
                
         for cluster in self.clusters:
-            clusterNP = np.array(list(cluster.values()))          
+            cluster = np.array(list(cluster.values()))          
             self.clustersData.append([])
             self.newClusters.append({})
-            newCentroides.append(np.average(clusterNP, axis=0))        
+            newCentroides.append(np.average(cluster, axis=0))        
        
         self.attribuerCluster(newCentroides, self.newClusters)
 
