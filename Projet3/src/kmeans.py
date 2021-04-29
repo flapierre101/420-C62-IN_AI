@@ -46,23 +46,27 @@ class Kmeans:
 
     def initialize(self):
         self.tempsGlobal = time()
-        self.tempsIteration = time()        
+        self.tempsIteration = time()    
+        self.oldClusterDictArray = []    
 
         indexCentroides = random.sample(range(0, len(self.motsUnique)), self.nbCentroides)
         
         for i in range(0, self.nbCentroides):          
             self.centroides.append(self.concMatrix[indexCentroides[i]])
             self.clusters.append([])
+            self.oldClusterDictArray.append({})
             
-            
+        # TODO mettre dans une fonction avec param    
         for mot, value in self.motsUnique.items():
             resultatsTemp = []       
             for i in range(0, self.nbCentroides):                         
                 resultatsTemp.append(self.__leastSquares(self.centroides[i], self.concMatrix[value])) 
 
             minElement = np.amin(resultatsTemp)
-            result = np.where(resultatsTemp == np.amin(resultatsTemp))                 
-            self.clusters[result[0][0]].append(self.concMatrix[value])
+            result = np.where(resultatsTemp == np.amin(resultatsTemp))     
+            indexCluster = result[0][0]              
+            self.clusters[indexCluster].append(self.concMatrix[value])
+            self.oldClusterDictArray[indexCluster][value] = True
 
         self.nbChangements = len(self.motsUnique)
         self.printIteration()
@@ -94,15 +98,18 @@ class Kmeans:
         self.nbChangements = 0        
         newCentroides = []
         self.clustersData = []
+        self.newClusterDictArray = []
+
         #print("Début de la création des nouveaux centroides")
         for cluster in self.clusters:
             cluster = np.array(cluster)
             self.newClusters.append([])
             self.clustersData.append([])
+            self.newClusterDictArray.append({})
             newCentroides.append(np.average(cluster, axis=0))
         #print("Fin de la création des nouveaux centroides")
         
-        #print("Début calcul scores de chaque mot")
+        # TODO mettre dans une fonction avec param
         for mot, value in self.motsUnique.items():
             resultatsTemp = []       
             for i in range(0, self.nbCentroides):                         
@@ -115,6 +122,7 @@ class Kmeans:
             indexCluster = result[0][0]          
             self.newClusters[indexCluster].append(self.concMatrix[value])
             self.clustersData[indexCluster].append((mot, minElement))
+            self.newClusterDictArray[indexCluster][value] = True
 
 
         #print("Fin calcul scores de chaque mot")
@@ -143,13 +151,25 @@ class Kmeans:
 
 
     def calculateChange(self, newCentroides):
-        for i in range(0, self.nbCentroides):
-            self.nbChangements += np.absolute(len(self.newClusters[i]) - len(self.clusters[i]))
+        self.nbChangements = 0
+
+        for i in range(self.nbCentroides):
+            if self.oldClusterDictArray[i] != self.newClusterDictArray[i]:   
+                self.nbChangements += self.dict_compare(self.oldClusterDictArray[i], self.newClusterDictArray[i])
+            self.oldClusterDictArray[i] = self.newClusterDictArray[i]
             self.clusters[i] = self.newClusters[i]
             if len(self.clusters[i]) > 0:
                 self.centroides[i] = newCentroides[i]
 
-        self.nbChangements /= 2 
+
+        
+
+
+    def dict_compare(self, d1, d2):
+        d1_keys = set(d1.keys())
+        d2_keys = set(d2.keys())
+        removed = d2_keys - d1_keys
+        return len(removed)
 
     def __leastSquares(self, motA, motB):  # motA & motB = type np.array(1,y)
         return np.sum(np.square(motA - motB))
