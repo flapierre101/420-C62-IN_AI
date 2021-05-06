@@ -1,28 +1,3 @@
-"""
-
-•	-t <taille> : taille de fenêtre. <taille> doit suivre -t, précédé d’un espace
-•	-n <nombre>: nombre maximal de mots à afficher par cluster (à la fin de l’exécution)
-•	-k <nombre> : nombre de centroïdes, une valeur entière. Avec cette option, vous devez choisir <nombre> vecteur(s) de votre matrice aléatoirement. Ces vecteurs sont les coordonnées initiales des centroïdes.
-
-
-Init : 
-1)Chaque cluster est un vecteur de mot prit au hasard dans le dictionnaire - on sors le vecteur de ce mot dans la matrice reconstituée
-
-======
-2)Ensuite  CHAQUE mot se compare à l'un des cluster choisi (avec least-square) et s'ajoute dans "l'équipe" du cluster avec le meilleur mot.
-
-3)On prend une "capture d'écran" des équipes. 
-
-4)On calcule la moyenne "np.average(data, axis=0)" des vecteurs à 24000 dimensions de chacune des équipes pour déterminer le nouveau centroide.
-======
-
-5)On refait l'étape 2 à 4 jusqu'à temps que les coordonnées des centroides restent identique = CONVERGENCE
-
-6) SUCCESS!
-
-
-"""
-
 import numpy as np
 import random
 from time import time
@@ -34,10 +9,9 @@ class Kmeans:
         self.fenetre = int(tailleFenetre)
         self.connexion = ConnexionDB()
         self.motsUnique = self.connexion.get_words()
-        self.concMatrix = self.connexion.get_cooc_mat(len(self.motsUnique), int(tailleFenetre))
-  
+        self.concMatrix = self.connexion.get_cooc_mat(len(self.motsUnique), int(tailleFenetre))        
         self.centroides = []    
-        self.clustersData = []
+        self.clustersData = [] # garder les scores pour l'affichage
         self.iteration = 0
         self.nbChangements = 0
         self.nbMots = int(nbMots)
@@ -59,6 +33,7 @@ class Kmeans:
         # Met chaque mot dans un cluster
         self.attribuerCluster(self.centroides, self.clusters)   
 
+        #première initialisation - nb de changements = au nombre de mots
         self.nbChangements = len(self.motsUnique)
 
         self.printIteration()       
@@ -90,8 +65,8 @@ class Kmeans:
                
         for cluster in self.clusters:
             cluster = np.array(list(cluster.values()))          
-            self.clustersData.append([])
-            self.newClusters.append({})
+            self.clustersData.append([]) # pour affichage des scores seulement
+            self.newClusters.append({}) # pour calcul des centroides
             newCentroides.append(np.average(cluster, axis=0))        
        
         self.attribuerCluster(newCentroides, self.newClusters)
@@ -110,8 +85,8 @@ class Kmeans:
 
             # minElement = le plus petit score, soit le meilleur pour least-square
             minElement = np.amin(resultatsTemp)
-            # result[0][0] = l'index du cluster ou insérer le mot
             result = np.where(resultatsTemp == minElement)   
+            # result[0][0] = l'index du cluster ou insérer le mot
             indexCluster = result[0][0]        
             self.clustersData[indexCluster].append((mot, minElement))
             clusterDict[indexCluster][value] = self.concMatrix[value]
@@ -132,7 +107,7 @@ class Kmeans:
         self.nbChangements = 0
 
         for i in range(self.nbCentroides):            
-            if self.clusters[i].keys() != self.newClusters[i].keys():   
+            if self.clusters[i].keys() != self.newClusters[i].keys():                   
                 self.nbChangements += self.dict_compare(self.clusters[i], self.newClusters[i])
             self.clusters[i] = self.newClusters[i]
             if len(self.clusters[i]) > 0:
@@ -144,7 +119,7 @@ class Kmeans:
 
         
 
-
+    # return le nombre d'élément enlevé seulement, ne tiens pas en compte les éléments ajoutés dans un cluster
     def dict_compare(self, d1, d2):
         d1_keys = set(d1.keys())
         d2_keys = set(d2.keys())
