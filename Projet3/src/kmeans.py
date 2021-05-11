@@ -78,6 +78,7 @@ class Kmeans:
         #print("Fin calcul changement")
     
     def attribuerCluster(self, centroides, clusterDict):
+        
         for mot, value in self.motsUnique.items():
             resultatsTemp = []       
             for i in range(0, self.nbCentroides):                         
@@ -85,8 +86,8 @@ class Kmeans:
 
             # minElement = le plus petit score, soit le meilleur pour least-square
             minElement = np.amin(resultatsTemp)
-            result = np.where(resultatsTemp == minElement)   
             # result[0][0] = l'index du cluster ou insérer le mot
+            result = np.where(resultatsTemp == minElement)   
             indexCluster = result[0][0]        
             self.clustersData[indexCluster].append((mot, minElement))
             clusterDict[indexCluster][value] = self.concMatrix[value]
@@ -107,8 +108,11 @@ class Kmeans:
         self.nbChangements = 0
 
         for i in range(self.nbCentroides):            
+            #calculer les changements
             if self.clusters[i].keys() != self.newClusters[i].keys():                   
                 self.nbChangements += self.dict_compare(self.clusters[i], self.newClusters[i])
+
+            # remplacer les anciens clusters et centroides par les nouveaux
             self.clusters[i] = self.newClusters[i]
             if len(self.clusters[i]) > 0:
                 self.centroides[i] = newCentroides[i]        
